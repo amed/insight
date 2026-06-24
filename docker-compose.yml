@@ -7,8 +7,8 @@ services:
       PORT: 4000
       NODE_ENV: development
       # model service URLs, wired into processing later
-      WHISPER_URL: http://whisper:4000
-      EMBEDDINGS_URL: http://embeddings:4000
+      WHISPER_URL: http://whisper:8000
+      EMBEDDINGS_URL: http://embeddings:8000
       LLM_BASE_URL: http://ollama:11434/v1
     depends_on: [db]
 
@@ -24,11 +24,11 @@ services:
 
   whisper:
     build: ./whisper
-    ports: ["8001:4000"]
+    ports: ["8001:8000"]
 
   embeddings:
     build: ./embeddings
-    ports: ["8002:4000"]
+    ports: ["8002:8000"]
 
   ollama:
     build: ./ollama
