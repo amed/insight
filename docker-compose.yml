@@ -1,0 +1,17 @@
+services:
+  whisper:
+    build: ./whisper
+    ports: ["8001:8000"]
+
+  embeddings:
+    build: ./embeddings
+    ports: ["8002:8000"]
+
+  ollama:
+    build: ./ollama
+    ports: ["11434:11434"]
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  ollama:
