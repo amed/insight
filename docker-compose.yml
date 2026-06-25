@@ -36,6 +36,10 @@ services:
     volumes:
       - ollama:/root/.ollama
 
+  web:
+    build: ./insight-web
+    ports: ["3000:3000"]
+
 volumes:
   ollama:
   pgdata:
