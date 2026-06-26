@@ -13,11 +13,36 @@ function serializeInteraction(interaction) {
     record: interaction.record
       ? {
           status: interaction.record.status,
-          // fields + citations arrive when extraction is implemented
-          fields: [],
+          fields: (interaction.record.fields || []).map((field) => ({
+            name: field.name,
+            value: field.value,
+            citations: (field.citations || []).map((c) => c.line && c.line.lineId),
+          })),
         }
       : null,
   };
 }
 
-module.exports = { serializeInteraction };
+// a lightweight summary is shaped for the list view
+function serializeInteractionSummary(interaction) {
+  return {
+    id: interaction.id,
+    interaction_id: interaction.interactionId,
+    source_filename: interaction.sourceFilename,
+    created_at: interaction.createdAt,
+    status: interaction.record ? interaction.record.status : null,
+  };
+}
+
+// a recorded step is shaped for the api
+function serializeStep(step) {
+  return {
+    id: step.id,
+    name: step.name,
+    status: step.status,
+    detail: step.detail,
+    created_at: step.createdAt,
+  };
+}
+
+module.exports = { serializeInteraction, serializeInteractionSummary, serializeStep };

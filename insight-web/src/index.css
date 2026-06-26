@@ -7,6 +7,8 @@
   --hover: #f4f4f5;
   --accent: #18181b;
   --accent-text: #ffffff;
+  --danger: #b91c1c;
+  --success: #15803d;
   --radius: 6px;
 }
 
@@ -69,6 +71,170 @@ body {
   padding: 24px;
 }
 
-.placeholder {
+.muted {
   color: var(--text-muted);
+}
+
+.error {
+  color: var(--danger);
+}
+
+.success {
+  color: var(--success);
+}
+
+.hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.audio-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.button {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 640px;
+}
+
+.upload-modes {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tab.active {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.upload-text {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.interactions {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.interaction-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 220px;
+}
+
+.link {
+  padding: 4px 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.detail h3 {
+  margin: 0 0 4px;
+}
+
+.lines,
+.fields {
+  list-style: none;
+  margin: 8px 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lines li,
+.fields li {
+  font-size: 14px;
+}
+
+.steps {
+  list-style: none;
+  margin: 8px 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.steps li {
+  font-size: 13px;
+}
+
+.step-status {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.step-ok {
+  color: var(--success);
+}
+
+.step-error {
+  color: var(--danger);
+}
+
+.step-skipped {
+  color: var(--text-muted);
+}
+
+.step-detail {
+  margin: 4px 0 0;
+  padding: 6px 8px;
+  background: var(--hover);
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
 }

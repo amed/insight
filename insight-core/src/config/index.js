@@ -6,10 +6,17 @@ module.exports = {
   databaseUrl: process.env.DATABASE_URL,
   nodeEnv: process.env.NODE_ENV || 'development',
 
-  // Model service URLs. Wired into processing later.
+  // Model service URLs.
   services: {
     whisper: process.env.WHISPER_URL,
     embeddings: process.env.EMBEDDINGS_URL,
+    diarization: process.env.DIARIZATION_URL,
     llmBaseUrl: process.env.LLM_BASE_URL,
   },
+
+  llmModel: process.env.LLM_MODEL || 'llama3.1',
+  topK: Number(process.env.RETRIEVAL_TOP_K || 5),
+
+  // cluster to role policy: the first speaker is the agent unless this is false
+  agentSpeaksFirst: process.env.AGENT_SPEAKS_FIRST !== 'false',
 };

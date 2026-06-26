@@ -1,38 +1,67 @@
-const { sequelize, Interaction, Line, InsightRecord } = require('../models');
+const { sequelize, Interaction, Line, InsightRecord, RecordField, FieldCitation, Step } = require('../models');
 const { buildLines } = require('./lineBuilder');
-const processingService = require('./processingService');
 
-// Stores a transcript as an interaction + its lines, then runs processing.
-// Everything happens in one transaction so a failure leaves nothing behind.
-// TODO: test
-async function createInteraction({ interactionId, turns, sourceFilename }) {
+// an empty interaction and its pending record are created in one transaction and the id is
+// returned, so the upload can respond immediately. the lines and fields are filled in later
+// on the background path (see processingService), once transcription and extraction finish.
+async function createPending({ interactionId, sourceFilename }) {
   return sequelize.transaction(async (transaction) => {
     const interaction = await Interaction.create(
       { interactionId, sourceFilename },
       { transaction }
     );
-
-    const lines = buildLines(turns).map((line) => ({
-      ...line,
-      interactionId: interaction.id,
-    }));
-    await Line.bulkCreate(lines, { transaction });
-
-    await processingService.process(interaction, { transaction });
-
+    await InsightRecord.create(
+      { interactionId: interaction.id, status: 'pending' },
+      { transaction }
+    );
     return interaction.id;
   });
 }
 
-// Loads an interaction with its lines (ordered) and its insight record.
+// the turns are stored as the interaction's lines, with stable ids and order
+async function saveLines(interactionId, turns) {
+  const lines = buildLines(turns).map((line) => ({ ...line, interactionId }));
+  await Line.bulkCreate(lines);
+}
+
+// the interactions are listed newest first, each with its record status
+async function listInteractions() {
+  return Interaction.findAll({
+    include: [{ model: InsightRecord, as: 'record', attributes: ['status'] }],
+    order: [['createdAt', 'DESC']],
+  });
+}
+
+// the interaction is loaded with its ordered lines and its record (fields + citations)
 async function getInteraction(id) {
   return Interaction.findByPk(id, {
     include: [
       { model: Line, as: 'lines' },
-      { model: InsightRecord, as: 'record' },
+      {
+        model: InsightRecord,
+        as: 'record',
+        include: [
+          {
+            model: RecordField,
+            as: 'fields',
+            include: [
+              {
+                model: FieldCitation,
+                as: 'citations',
+                include: [{ model: Line, as: 'line' }],
+              },
+            ],
+          },
+        ],
+      },
     ],
     order: [[{ model: Line, as: 'lines' }, 'ordinal', 'ASC']],
   });
 }
 
-module.exports = { createInteraction, getInteraction };
+// the recorded steps for an interaction are loaded oldest first
+async function getSteps(interactionId) {
+  return Step.findAll({ where: { interactionId }, order: [['id', 'ASC']] });
+}
+
+module.exports = { createPending, saveLines, listInteractions, getInteraction, getSteps };

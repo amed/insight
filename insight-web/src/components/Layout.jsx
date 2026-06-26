@@ -1,11 +1,17 @@
 import Nav from './Nav.jsx';
-import Placeholder from './Placeholder.jsx';
-import { sections } from '../sections.js';
+import Interactions from './Interactions.jsx';
+import Upload from './Upload.jsx';
 import { useNavigation } from '../hooks/useNavigation.js';
+
+// each section key maps to its view
+const views = {
+  interactions: Interactions,
+  upload: Upload,
+};
 
 export default function Layout() {
   const { active } = useNavigation();
-  const section = sections.find((s) => s.key === active);
+  const View = views[active];
 
   return (
     <div className="layout">
@@ -13,9 +19,7 @@ export default function Layout() {
         <h1>Insight</h1>
         <Nav />
       </header>
-      <main className="content">
-        <Placeholder title={section ? section.label : 'Insight'} />
-      </main>
+      <main className="content">{View ? <View /> : null}</main>
     </div>
   );
 }

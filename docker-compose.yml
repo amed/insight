@@ -1,16 +1,18 @@
 services:
-  core:
-    build: ./insight-core
-    ports: ["4000:4000"]
-    environment:
-      DATABASE_URL: postgres://insight:insight@db:5432/insight
-      PORT: 4000
-      NODE_ENV: development
-      # model service URLs, wired into processing later
-      WHISPER_URL: http://whisper:8000
-      EMBEDDINGS_URL: http://embeddings:8000
-      LLM_BASE_URL: http://ollama:11434/v1
-    depends_on: [db]
+  # core:
+  #   build: ./insight-core
+  #   ports: ["4000:4000"]
+  #   environment:
+  #     DATABASE_URL: postgres://insight:insight@db:5432/insight
+  #     PORT: 4000
+  #     NODE_ENV: development
+  #     # model service urls
+  #     WHISPER_URL: http://whisper:8000
+  #     EMBEDDINGS_URL: http://embeddings:8000
+  #     DIARIZATION_URL: http://diarization:8000
+  #     LLM_BASE_URL: http://ollama:11434/v1
+  #     LLM_MODEL: llama3.1
+  #   depends_on: [db]
 
   db:
     image: postgres:16-alpine
@@ -29,6 +31,18 @@ services:
   embeddings:
     build: ./embeddings
     ports: ["8002:8000"]
+    environment:
+      HF_TOKEN: ${HF_TOKEN}
+
+  diarization:
+    build: ./diarization
+    ports: ["8003:8000"]
+    environment:
+      DIARIZATION_MODEL_NAME: pyannote/speaker-diarization-community-1
+      DIARIZATION_DEVICE: cpu
+      HF_TOKEN: ${HF_TOKEN}
+    volumes:
+      - hfcache:/root/.cache/huggingface
 
   ollama:
     build: ./ollama
@@ -36,10 +50,11 @@ services:
     volumes:
       - ollama:/root/.ollama
 
-  web:
-    build: ./insight-web
-    ports: ["3000:3000"]
+  # web:
+  #   build: ./insight-web
+  #   ports: ["3000:3000"]
 
 volumes:
   ollama:
   pgdata:
+  hfcache:
