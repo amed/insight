@@ -30,18 +30,18 @@ async function create(req, res) {
   const splitChannels = req.body.split_channels === 'true' || req.body.split_channels === '1';
   const agentChannel = Number.parseInt(req.body.agent_channel, 10);
 
-  const prepared = intake.prepare(req.file);
-  const id = await interactionService.createPending({
+  const prepared = intake.prepare(req.file); // classify + validate
+  const id = await interactionService.createPending({ // pending row
     interactionId: prepared.interactionId,
     sourceFilename: req.file.originalname,
   });
 
-  processingService.run(id, prepared, req.file, {
+  processingService.run(id, prepared, req.file, { // background, not awaited
     splitChannels,
     agentChannel: Number.isNaN(agentChannel) ? 0 : agentChannel,
   });
 
-  res.status(202).json({ id, status: 'pending' });
+  res.status(202).json({ id, status: 'pending' }); // returns immediately - promise ignored
 }
 
 // the stored interaction is returned with its lines and record

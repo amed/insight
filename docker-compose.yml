@@ -1,18 +1,18 @@
 services:
-  # core:
-  #   build: ./insight-core
-  #   ports: ["4000:4000"]
-  #   environment:
-  #     DATABASE_URL: postgres://insight:insight@db:5432/insight
-  #     PORT: 4000
-  #     NODE_ENV: development
-  #     # model service urls
-  #     WHISPER_URL: http://whisper:8000
-  #     EMBEDDINGS_URL: http://embeddings:8000
-  #     DIARIZATION_URL: http://diarization:8000
-  #     LLM_BASE_URL: http://ollama:11434/v1
-  #     LLM_MODEL: llama3.1
-  #   depends_on: [db]
+  core:
+    build: ./insight-core
+    ports: ["4000:4000"]
+    environment:
+      DATABASE_URL: postgres://insight:insight@db:5432/insight
+      PORT: 4000
+      NODE_ENV: development
+      # model service urls
+      WHISPER_URL: http://whisper:8000
+      EMBEDDINGS_URL: http://embeddings:8000
+      DIARIZATION_URL: http://diarization:8000
+      LLM_BASE_URL: http://ollama:11434/v1
+      LLM_MODEL: llama3.1
+    depends_on: [db]
 
   db:
     image: postgres:16-alpine
@@ -50,9 +50,9 @@ services:
     volumes:
       - ollama:/root/.ollama
 
-  # web:
-  #   build: ./insight-web
-  #   ports: ["3000:3000"]
+  web:
+    build: ./insight-web
+    ports: ["3000:3000"]
 
 volumes:
   ollama:
