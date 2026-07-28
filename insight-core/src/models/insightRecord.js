@@ -6,6 +6,8 @@ module.exports = (sequelize) => {
   InsightRecord.init(
     {
       status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'pending' },
+      pipeline: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'p2' }, // p1 | p2 | p3
+      configVersion: { type: DataTypes.TEXT, allowNull: true },
     },
     {
       sequelize,

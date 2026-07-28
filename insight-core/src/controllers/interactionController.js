@@ -30,10 +30,17 @@ async function create(req, res) {
   const splitChannels = req.body.split_channels === 'true' || req.body.split_channels === '1';
   const agentChannel = Number.parseInt(req.body.agent_channel, 10);
 
+  // extraction pipeline: p1 tf-idf baseline, p2 retrieval-grounded llm, p3 direct llm
+  const pipeline = req.body.pipeline || 'p2';
+  if (!['p1', 'p2', 'p3'].includes(pipeline)) {
+    throw new HttpError(400, 'pipeline must be p1, p2, or p3');
+  }
+
   const prepared = intake.prepare(req.file); // classify + validate
   const id = await interactionService.createPending({ // pending row
     interactionId: prepared.interactionId,
     sourceFilename: req.file.originalname,
+    pipeline,
   });
 
   processingService.run(id, prepared, req.file, { // background, not awaited

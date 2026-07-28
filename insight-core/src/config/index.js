@@ -11,6 +11,7 @@ module.exports = {
     whisper: process.env.WHISPER_URL,
     embeddings: process.env.EMBEDDINGS_URL,
     diarization: process.env.DIARIZATION_URL,
+    baseline: process.env.BASELINE_URL,
     llmBaseUrl: process.env.LLM_BASE_URL,
   },
 

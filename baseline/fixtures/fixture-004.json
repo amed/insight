@@ -1,0 +1,13 @@
+{
+  "interaction_id": "pilot-004",
+  "turns": [
+    { "speaker": "agent", "text": "Hello, thanks for contacting support. What seems to be the problem?" },
+    { "speaker": "customer", "text": "The headphones I bought a month ago stopped working. The left side is completely dead." },
+    { "speaker": "agent", "text": "Sorry to hear that. Have you tried resetting them as described in the manual?" },
+    { "speaker": "customer", "text": "Yes, twice. Nothing changes, the left side stays silent." },
+    { "speaker": "agent", "text": "Understood, that sounds like a hardware fault. They are under warranty, so I can arrange a replacement." },
+    { "speaker": "customer", "text": "That would be good. How does it work?" },
+    { "speaker": "agent", "text": "I will email you a return label. Once the carrier scans the package, the replacement ships automatically." },
+    { "speaker": "customer", "text": "Okay, a bit annoying to be without them, but fair enough." }
+  ]
+}

@@ -13,6 +13,8 @@ function serializeInteraction(interaction) {
     record: interaction.record
       ? {
           status: interaction.record.status,
+          pipeline: interaction.record.pipeline,
+          config_version: interaction.record.configVersion,
           fields: (interaction.record.fields || []).map((field) => ({
             name: field.name,
             value: field.value,
@@ -31,6 +33,7 @@ function serializeInteractionSummary(interaction) {
     source_filename: interaction.sourceFilename,
     created_at: interaction.createdAt,
     status: interaction.record ? interaction.record.status : null,
+    pipeline: interaction.record ? interaction.record.pipeline : null,
   };
 }
 

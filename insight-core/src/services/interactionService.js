@@ -4,14 +4,14 @@ const { buildLines } = require('./lineBuilder');
 // an empty interaction and its pending record are created in one transaction and the id is
 // returned, so the upload can respond immediately. the lines and fields are filled in later
 // on the background path (see processingService), once transcription and extraction finish.
-async function createPending({ interactionId, sourceFilename }) {
+async function createPending({ interactionId, sourceFilename, pipeline = 'p2' }) {
   return sequelize.transaction(async (transaction) => {
     const interaction = await Interaction.create(
       { interactionId, sourceFilename },
       { transaction }
     );
     await InsightRecord.create(
-      { interactionId: interaction.id, status: 'pending' },
+      { interactionId: interaction.id, status: 'pending', pipeline },
       { transaction }
     );
     return interaction.id;
@@ -27,7 +27,7 @@ async function saveLines(interactionId, turns) {
 // the interactions are listed newest first, each with its record status
 async function listInteractions() {
   return Interaction.findAll({
-    include: [{ model: InsightRecord, as: 'record', attributes: ['status'] }],
+    include: [{ model: InsightRecord, as: 'record', attributes: ['status', 'pipeline'] }],
     order: [['createdAt', 'DESC']],
   });
 }

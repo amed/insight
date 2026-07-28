@@ -1,0 +1,11 @@
+{
+  "interaction_id": "pilot-001",
+  "turns": [
+    { "speaker": "agent", "text": "Thank you for calling support, how can I help you today?" },
+    { "speaker": "customer", "text": "Hi, I was charged twice for my order last week and I am not happy about it." },
+    { "speaker": "agent", "text": "I am sorry about that. Can I get your order number?" },
+    { "speaker": "customer", "text": "Sure, it is 48213. I want one of the charges refunded." },
+    { "speaker": "agent", "text": "Thanks. I can see the duplicate charge, I have refunded it now. It will show up in three to five days." },
+    { "speaker": "customer", "text": "Alright, as long as the money comes back. Thanks." }
+  ]
+}

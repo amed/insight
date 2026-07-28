@@ -1,0 +1,13 @@
+{
+  "interaction_id": "pilot-003",
+  "turns": [
+    { "speaker": "agent", "text": "Good afternoon, support speaking, how can I help?" },
+    { "speaker": "customer", "text": "My package was supposed to arrive five days ago and there is still nothing. This is the second time this happens." },
+    { "speaker": "agent", "text": "I am sorry for the delay. Let me check the tracking. It seems the parcel is stuck at the regional depot." },
+    { "speaker": "customer", "text": "Stuck where it was three days ago. This is unacceptable, I paid for express shipping." },
+    { "speaker": "agent", "text": "I understand. I cannot release it from here, but I can escalate this to the carrier team." },
+    { "speaker": "customer", "text": "Do that. And if it is not here this week I am cancelling my account and ordering elsewhere." },
+    { "speaker": "agent", "text": "I have raised the escalation and marked it urgent. You will be contacted within one business day." },
+    { "speaker": "customer", "text": "Fine. I will wait, but I am really disappointed." }
+  ]
+}
