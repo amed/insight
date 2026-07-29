@@ -62,5 +62,6 @@ Per-service checks (whisper, embeddings, diarization, ollama) are in `docs/testi
 | whisper | 8001 | audio to text |
 | embeddings | 8002 | SBERT retrieval |
 | diarization | 8003 | who spoke when, gated model |
+| baseline | 8004 | TF-IDF pipeline p1, trains on start |
 | ollama | 11434 | LLM, pulls the model on first start |
 | web | 3000 | react app |

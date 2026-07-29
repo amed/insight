@@ -1,5 +1,5 @@
 {
-  "interaction_id": "pilot-001",
+  "interaction_id": "fixture-001",
   "turns": [
     { "speaker": "agent", "text": "Thank you for calling support, how can I help you today?" },
     { "speaker": "customer", "text": "Hi, I was charged twice for my order last week and I am not happy about it." },

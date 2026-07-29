@@ -1,5 +1,5 @@
 {
-  "interaction_id": "pilot-004",
+  "interaction_id": "fixture-004",
   "turns": [
     { "speaker": "agent", "text": "Hello, thanks for contacting support. What seems to be the problem?" },
     { "speaker": "customer", "text": "The headphones I bought a month ago stopped working. The left side is completely dead." },

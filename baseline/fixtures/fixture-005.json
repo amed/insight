@@ -1,5 +1,5 @@
 {
-  "interaction_id": "pilot-005",
+  "interaction_id": "fixture-005",
   "turns": [
     { "speaker": "agent", "text": "Hi, welcome to support, how can I help?" },
     { "speaker": "customer", "text": "I am on the starter plan and thinking about upgrading. What does the pro plan cost and what is included?" },

@@ -1,5 +1,5 @@
 {
-  "pilot-001": {
+  "fixture-001": {
     "intent": "refund_request",
     "issue_type": "billing_error",
     "sentiment": "negative",
@@ -7,7 +7,7 @@
     "risk": "low",
     "next_action": "refund_or_credit"
   },
-  "pilot-002": {
+  "fixture-002": {
     "intent": "account_access",
     "issue_type": "account_access",
     "sentiment": "neutral",
@@ -15,7 +15,7 @@
     "risk": "none",
     "next_action": "none"
   },
-  "pilot-003": {
+  "fixture-003": {
     "intent": "complaint",
     "issue_type": "delivery_problem",
     "sentiment": "negative",
@@ -23,7 +23,7 @@
     "risk": "high",
     "next_action": "escalation"
   },
-  "pilot-004": {
+  "fixture-004": {
     "intent": "replacement_request",
     "issue_type": "product_defect",
     "sentiment": "negative",
@@ -31,7 +31,7 @@
     "risk": "low",
     "next_action": "replacement_or_repair"
   },
-  "pilot-005": {
+  "fixture-005": {
     "intent": "information_request",
     "issue_type": "none",
     "sentiment": "positive",

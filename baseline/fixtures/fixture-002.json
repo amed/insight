@@ -1,5 +1,5 @@
 {
-  "interaction_id": "pilot-002",
+  "interaction_id": "fixture-002",
   "turns": [
     { "speaker": "agent", "text": "Hello, you have reached support. What can I do for you?" },
     { "speaker": "customer", "text": "I cannot log in to my account. It says my password is wrong but I am sure it is correct." },

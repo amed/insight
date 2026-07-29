@@ -1,5 +1,5 @@
 {
-  "interaction_id": "pilot-003",
+  "interaction_id": "fixture-003",
   "turns": [
     { "speaker": "agent", "text": "Good afternoon, support speaking, how can I help?" },
     { "speaker": "customer", "text": "My package was supposed to arrive five days ago and there is still nothing. This is the second time this happens." },

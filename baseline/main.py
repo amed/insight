@@ -19,7 +19,8 @@ class Request(BaseModel):
   lines: list[Line]
 
 
-# all six field values are predicted from the flattened conversation in one call
+# all field values are predicted from the flattened conversation in one call. the schema
+# claim (id and hash the artifact was trained for) rides along so core can refuse a mismatch.
 @app.post("/extract")
 def extract(req: Request):
   text = " ".join(f"{line.speaker}: {line.text}" for line in req.lines)
@@ -28,4 +29,9 @@ def extract(req: Request):
     {"name": name, "value": str(model.predict(matrix)[0])}
     for name, model in bundle["models"].items()
   ]
-  return {"fields": fields, "model_version": bundle["version"]}
+  return {
+    "fields": fields,
+    "model_version": bundle["version"],
+    "schema": bundle["schema"],
+    "schema_hash": bundle["schema_hash"],
+  }

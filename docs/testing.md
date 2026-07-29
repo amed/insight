@@ -123,6 +123,32 @@ segments and maps the clusters to agent and customer (first speaker is the agent
 
 ---
 
+## baseline (TF-IDF, pipeline p1)
+
+Trains at container start on the 5 fixture conversations in `baseline/fixtures/`
+(sub-second), so the model can never go stale against the fixture data. Fields and
+allowed values come from the schema file (mounted from `insight-core/schemas`); a fixture
+label outside the schema aborts the training. The trained version is a hash of the
+fixture data, stored with every p1 record as `config_version`.
+
+```bash
+docker compose up -d baseline
+
+curl -s localhost:8004/extract -H 'Content-Type: application/json' \
+  -d '{"lines":[{"speaker":"customer","text":"I was charged twice, I want a refund"}]}'
+```
+
+Expected: all field values, the model version, and the schema claim the artifact was
+trained for (core fails any p1 record whose schema does not match it):
+
+```json
+{ "fields": [ { "name": "intent", "value": "refund_request" }, ... ],
+  "model_version": "tfidf-logreg|6407b704569f21",
+  "schema": "v1", "schema_hash": "346a2faee4f519" }
+```
+
+---
+
 ## ollama (LLM)
 
 ```bash
@@ -181,6 +207,36 @@ curl -s -i -F "file=@assets/test1.mp3" \
 is the agent. Without `split_channels`, the file is treated as combined and diarization
 assigns the roles; if diarization is down the speakers stay `unknown` and the upload
 still succeeds.
+
+### choose the extraction pipeline and schema
+
+Any upload takes an optional `pipeline` form field: `p1` (TF-IDF baseline), `p2`
+(retrieval-grounded LLM, the default), or `p3` (direct LLM, whole conversation, no
+retrieval), and an optional `schema` form field (the base schema `v1` when
+omitted, see `docs/schemas.md`). The pipeline, its effective configuration, and the
+schema stamp are stored on the record.
+
+```bash
+# the loaded schemas
+curl -s localhost:4000/schemas
+
+# value counts for one schema version, optionally one pipeline
+curl -s "localhost:4000/schemas/support/summary?version=1&pipeline=p2"
+```
+
+```bash
+curl -s -i -F "file=@baseline/fixtures/fixture-001.json" -F "pipeline=p3" localhost:4000/interactions
+```
+
+To run all three pipelines on the 5 fixture conversations and print the records side by
+side (needs the full stack up):
+
+```bash
+python3 evaluation/e2e.py
+```
+
+The script uploads sequentially, waits for each record, checks that all six fields were
+produced, prints any error steps, and writes a run manifest to `evaluation/runs/`.
 
 ### read results and trace
 
