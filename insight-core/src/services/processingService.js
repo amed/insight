@@ -1,16 +1,17 @@
 const { sequelize, InsightRecord, Line, RecordField, FieldCitation } = require('../models');
 const interactionService = require('./interactionService');
 const intake = require('./intake');
+const schemas = require('./schemas');
 const retrievalClient = require('./retrievalClient');
 const baselineClient = require('./baselineClient');
 const llmClient = require('./llmClient');
 const trace = require('./trace');
 const extractJson = require('../utils/extractJson');
 const config = require('../config');
-const FIELDS = require('./fields');
 
-// bumped when the extraction prompt text changes, part of the stored config version
-const PROMPT_VERSION = 'prompt1';
+// bumped when the extraction prompt text changes, part of the stored config version.
+// prompt2: the value is constrained to the schema's closed values plus unknown.
+const PROMPT_VERSION = 'prompt2';
 
 // a short error message is taken from an error or value
 function message(err) {
@@ -26,7 +27,7 @@ function llmConfigVersion(pipeline) {
 
 // the whole pipeline for one interaction runs here, off the request path, so the upload
 // responds at once. turns are obtained (transcribed and diarized for audio), stored as
-// lines, then the record's pipeline extracts the fields. every stage is traced.
+// lines, then the record's pipeline extracts the schema's fields. every stage is traced.
 async function run(interactionId, prepared, file, options) {
   try {
     const turns = await obtainTurns(interactionId, prepared, file, options);
@@ -43,17 +44,29 @@ async function run(interactionId, prepared, file, options) {
     });
 
     const record = await InsightRecord.findOne({ where: { interactionId } });
+
+    // the schema was stamped at upload; extraction refuses to run without it
+    const schema = schemas.get(`${record.schemaName}-v${record.schemaVersion}`);
+    if (!schema) {
+      await trace.record(interactionId, 'processing:failed', 'error', {
+        reason: `schema ${record.schemaName}-v${record.schemaVersion} is not loaded`,
+      });
+      await markFailed(interactionId);
+      return;
+    }
+
     await trace.record(interactionId, 'processing:start', 'ok', {
       pipeline: record.pipeline,
+      schema: schema.id,
       lines: lines.length,
-      fields: FIELDS.map((field) => field.name),
+      fields: schema.fields.map((field) => field.name),
     });
 
     if (record.pipeline === 'p1') {
       await extractBaseline(interactionId, record, lines);
     } else {
       await record.update({ configVersion: llmConfigVersion(record.pipeline) });
-      for (const field of FIELDS) {
+      for (const field of schema.fields) {
         await extractField(interactionId, record, field, lines, record.pipeline);
       }
     }
@@ -82,7 +95,7 @@ async function obtainTurns(interactionId, prepared, file, options) {
   return turns;
 }
 
-// p1: all six fields come from one call to the tf-idf baseline service. a failure marks
+// p1: all fields come from one call to the tf-idf baseline service. a failure marks
 // the record failed, there is nothing partial to salvage from a single call.
 async function extractBaseline(interactionId, record, lines) {
   let data;
@@ -91,6 +104,20 @@ async function extractBaseline(interactionId, record, lines) {
   } catch (err) {
     await trace.record(interactionId, 'extract:baseline', 'error', { message: message(err) });
     throw err;
+  }
+
+  // the artifact claims the schema it was trained for; a mismatch would store values
+  // that do not belong to the record's schema, so the record fails instead
+  const recordSchema = `${record.schemaName}-v${record.schemaVersion}`;
+  if (data.schema !== recordSchema || data.schema_hash !== record.schemaHash) {
+    await trace.record(interactionId, 'extract:baseline', 'error', {
+      reason: 'schema mismatch',
+      artifact_schema: data.schema,
+      artifact_schema_hash: data.schema_hash,
+      record_schema: recordSchema,
+      record_schema_hash: record.schemaHash,
+    });
+    throw new Error(`baseline is trained for ${data.schema}, record is ${recordSchema}`);
   }
 
   // the trained model version (a hash of the training data) is the p1 config version
@@ -115,7 +142,7 @@ async function extractField(interactionId, record, field, lines, pipeline) {
   } else {
     let matches;
     try {
-      matches = await retrievalClient.search(field.query, lines.map((l) => l.text), config.topK);
+      matches = await retrievalClient.search(field.question, lines.map((l) => l.text), config.topK);
     } catch (err) {
       await trace.record(interactionId, `retrieve:${field.name}`, 'error', { message: message(err) });
       return;
@@ -123,7 +150,7 @@ async function extractField(interactionId, record, field, lines, pipeline) {
 
     const ranked = matches.map((m) => lines[m.index]);
     await trace.record(interactionId, `retrieve:${field.name}`, 'ok', {
-      query: field.query,
+      question: field.question,
       matched: ranked.map((l) => l.lineId),
       scores: matches.map((m) => Number(m.score.toFixed(3))),
     });
@@ -149,16 +176,23 @@ async function extractField(interactionId, record, field, lines, pipeline) {
     return;
   }
 
+  // the answer is normalized and checked against the closed set. an out-of-set answer
+  // is stored as unknown and loses its citations, they supported a rejected answer.
+  const raw = String(extracted.value).trim().toLowerCase();
+  const coerced = raw !== 'unknown' && !field.values.includes(raw);
+  const value = coerced ? 'unknown' : raw;
+
   // grounding check: keep only citations that were in the lines given to the model.
-  // the model may ignore the schema and return a non-array, treated as no citations.
-  const cited = Array.isArray(extracted.citations) ? extracted.citations : [];
+  // the model may ignore the schema and return a non-array, treated as no citations;
+  // repeated ids are deduplicated, the citations table is unique per (field, line).
+  const cited = coerced || !Array.isArray(extracted.citations) ? [] : [...new Set(extracted.citations)];
   const allowed = new Map(topLines.map((l) => [l.lineId, l]));
   const citedLines = cited.map((id) => allowed.get(id)).filter(Boolean);
   const dropped = cited.filter((id) => !allowed.has(id));
 
   await sequelize.transaction(async (transaction) => {
     const saved = await RecordField.create(
-      { recordId: record.id, name: field.name, value: extracted.value },
+      { recordId: record.id, name: field.name, value },
       { transaction }
     );
     await FieldCitation.bulkCreate(
@@ -167,9 +201,12 @@ async function extractField(interactionId, record, field, lines, pipeline) {
     );
   });
 
-  // lines_given and prompt_chars make silent context truncation visible for p3
+  // lines_given and prompt_chars make silent context truncation visible for p3;
+  // raw_value keeps coerced answers debuggable and abstention distinguishable
   await trace.record(interactionId, `extract:${field.name}`, 'ok', {
-    value: extracted.value,
+    value,
+    coerced,
+    ...(coerced ? { raw_value: extracted.value } : {}),
     citations: citedLines.map((l) => l.lineId),
     dropped_citations: dropped,
     lines_given: topLines.length,
@@ -181,6 +218,7 @@ async function askLlm(field, lines) {
   const numbered = lines
     .map((l) => `${l.lineId} (${l.speaker}): ${l.text}`)
     .join('\n');
+  const values = [...field.values, 'unknown'].join(', ');
 
   const messages = [
     {
@@ -188,12 +226,16 @@ async function askLlm(field, lines) {
       content:
         'You extract one field from a customer support conversation. ' +
         'Use only the provided lines. Reply with JSON: ' +
-        '{"value": "<short answer>", "citations": ["<line id>", ...]}. ' +
+        '{"value": "<one of the allowed values>", "citations": ["<line id>", ...]}. ' +
+        'The value must be exactly one of the allowed values. ' +
+        'Use "unknown" when the lines do not support any value. ' +
         'citations are the line ids that support the value.',
     },
     {
       role: 'user',
-      content: `Field: ${field.name}\nQuestion: ${field.query}\n\nLines:\n${numbered}`,
+      content:
+        `Field: ${field.name}\nQuestion: ${field.question}\n` +
+        `Allowed values: ${values}\n\nLines:\n${numbered}`,
     },
   ];
   const promptChars = messages[0].content.length + messages[1].content.length;

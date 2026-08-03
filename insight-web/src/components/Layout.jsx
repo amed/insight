@@ -1,12 +1,14 @@
 import Nav from './Nav.jsx';
 import Interactions from './Interactions.jsx';
 import Upload from './Upload.jsx';
+import Summary from './Summary.jsx';
 import { useNavigation } from '../hooks/useNavigation.js';
 
 // each section key maps to its view
 const views = {
   interactions: Interactions,
   upload: Upload,
+  insights: Summary,
 };
 
 export default function Layout() {

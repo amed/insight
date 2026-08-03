@@ -1,7 +1,7 @@
 const config = require('../config');
 
-// the conversation lines are sent to the tf-idf baseline service; all six field
-// values and the trained model version are returned in one call
+// the conversation lines are sent to the tf-idf baseline service
+// all six field values and the trained model version are returned in one call
 async function extract(lines) {
   const res = await fetch(`${config.services.baseline}/extract`, {
     method: 'POST',
@@ -10,9 +10,9 @@ async function extract(lines) {
       lines: lines.map((l) => ({ speaker: l.speaker, text: l.text })),
     }),
   });
-  if (!res.ok) {
-    throw new Error(`baseline /extract failed: ${res.status}`);
-  }
+
+  if (!res.ok) throw new Error(`baseline extract failed: ${res.status}`);
+
   return res.json();
 }
 

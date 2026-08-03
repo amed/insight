@@ -48,6 +48,16 @@ services:
   baseline:
     build: ./baseline
     ports: ["8004:8000"]
+    environment:
+      SCHEMAS_DIR: /schemas
+      BASELINE_SCHEMA: v1
+      BASELINE_DATA: /train
+    volumes:
+      # the schema files are the single source of truth, mounted read-only from core
+      - ./insight-core/schemas:/schemas:ro
+      # p1 training data (built by convert_abcd.py --train-out); when absent, training
+      # falls back to the bundled fixtures
+      - ./evaluation/data/abcd-train:/train:ro
 
   ollama:
     build: ./ollama

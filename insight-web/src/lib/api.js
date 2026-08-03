@@ -31,3 +31,15 @@ export function createInteraction(file, fields = {}) {
   Object.entries(fields).forEach(([key, value]) => body.append(key, value));
   return request('/interactions', { method: 'POST', body });
 }
+
+// the loaded schemas are fetched (id, version, fields, default flag)
+export function getSchemas() {
+  return request('/schemas');
+}
+
+// value counts for one schema version, optionally filtered to one pipeline
+export function getSchemaSummary(name, version, pipeline) {
+  const params = new URLSearchParams({ version });
+  if (pipeline) params.set('pipeline', pipeline);
+  return request(`/schemas/${name}/summary?${params}`);
+}

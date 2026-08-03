@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useCreateInteraction } from '../hooks/useCreateInteraction.js';
+import { useSchemas } from '../hooks/useSchemas.js';
 import { buildTranscriptFile } from '../lib/transcript.js';
 
 const modes = [
@@ -15,7 +16,13 @@ export default function Upload() {
   const [channels, setChannels] = useState(null);
   const [splitChannels, setSplitChannels] = useState(false);
   const [agentChannel, setAgentChannel] = useState(0);
+  const [schemaId, setSchemaId] = useState(null);
+  const { data: schemaList } = useSchemas();
   const mutation = useCreateInteraction();
+
+  // the batch's schema; the base schema until another is picked
+  const fallback = schemaList && (schemaList.find((s) => s.default) || schemaList[0]);
+  const schema = schemaId || (fallback && fallback.id) || null;
 
   // the inputs are reset when the mode changes
   function changeMode(next) {
@@ -50,10 +57,12 @@ export default function Upload() {
     event.preventDefault();
     const payload = mode === 'text' ? buildTranscriptFile(text) : file;
     if (!payload) return;
-    const fields =
-      mode === 'audio' && channels >= 2 && splitChannels
+    const fields = {
+      ...(schema ? { schema } : {}),
+      ...(mode === 'audio' && channels >= 2 && splitChannels
         ? { split_channels: '1', agent_channel: agentChannel }
-        : {};
+        : {}),
+    };
     mutation.mutate(
       { file: payload, fields },
       {
@@ -140,6 +149,17 @@ export default function Upload() {
             <p className="hint">mono: speakers are mixed, roles are inferred from the content.</p>
           )}
         </>
+      )}
+
+      {schemaList && schemaList.length > 1 && (
+        <label className="hint">
+          schema{' '}
+          <select value={schema || ''} onChange={(event) => setSchemaId(event.target.value)}>
+            {schemaList.map((s) => (
+              <option key={s.id} value={s.id}>{s.id}</option>
+            ))}
+          </select>
+        </label>
       )}
 
       <button type="submit" className="button" disabled={mutation.isPending}>

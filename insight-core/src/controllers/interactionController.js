@@ -1,6 +1,7 @@
 const interactionService = require('../services/interactionService');
 const processingService = require('../services/processingService');
 const intake = require('../services/intake');
+const schemas = require('../services/schemas');
 const {
   serializeInteraction,
   serializeInteractionSummary,
@@ -36,11 +37,20 @@ async function create(req, res) {
     throw new HttpError(400, 'pipeline must be p1, p2, or p3');
   }
 
+  // the schema the batch was selected under; the base schema when none is named.
+  // p1 needs no guard here: the baseline artifact claims the schema it was trained
+  // for and processing fails the record on a mismatch.
+  const schema = schemas.get(req.body.schema || schemas.DEFAULT_ID);
+  if (!schema) {
+    throw new HttpError(400, `unknown schema (see GET /schemas)`);
+  }
+
   const prepared = intake.prepare(req.file); // classify + validate
   const id = await interactionService.createPending({ // pending row
     interactionId: prepared.interactionId,
     sourceFilename: req.file.originalname,
     pipeline,
+    schema,
   });
 
   processingService.run(id, prepared, req.file, { // background, not awaited
