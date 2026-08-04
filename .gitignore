@@ -9,3 +9,4 @@ dist
 
 baseline/model.joblib
 evaluation/runs/
+insight-core/coverage

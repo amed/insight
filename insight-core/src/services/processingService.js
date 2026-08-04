@@ -46,10 +46,10 @@ async function run(interactionId, prepared, file, options) {
     const record = await InsightRecord.findOne({ where: { interactionId } });
 
     // the schema was stamped at upload; extraction refuses to run without it
-    const schema = schemas.get(`${record.schemaName}-v${record.schemaVersion}`);
+    const schema = schemas.get(record.schemaName);
     if (!schema) {
       await trace.record(interactionId, 'processing:failed', 'error', {
-        reason: `schema ${record.schemaName}-v${record.schemaVersion} is not loaded`,
+        reason: `schema ${record.schemaName} is not loaded`,
       });
       await markFailed(interactionId);
       return;
@@ -108,7 +108,7 @@ async function extractBaseline(interactionId, record, lines) {
 
   // the artifact claims the schema it was trained for; a mismatch would store values
   // that do not belong to the record's schema, so the record fails instead
-  const recordSchema = `${record.schemaName}-v${record.schemaVersion}`;
+  const recordSchema = record.schemaName;
   if (data.schema !== recordSchema || data.schema_hash !== record.schemaHash) {
     await trace.record(interactionId, 'extract:baseline', 'error', {
       reason: 'schema mismatch',
