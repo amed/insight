@@ -1,19 +1,13 @@
 services:
-  # core:
-  #   build: ./insight-core
-  #   ports: ["4000:4000"]
-  #   environment:
-  #     DATABASE_URL: postgres://insight:insight@db:5432/insight
-  #     PORT: 4000
-  #     NODE_ENV: development
-  #     # model service urls
-  #     WHISPER_URL: http://whisper:8000
-  #     EMBEDDINGS_URL: http://embeddings:8000
-  #     DIARIZATION_URL: http://diarization:8000
-  #     BASELINE_URL: http://baseline:8000
-  #     LLM_BASE_URL: http://ollama:11434/v1
-  #     LLM_MODEL: llama3.1
-  #   depends_on: [db]
+  core:
+    build: ./insight-core
+    env_file:
+      - ./insight-core/.env
+    ports: ["4000:4000"]
+    command: sh -c "npm run migrate:up && npm start"
+    depends_on: [db]
+    networks:
+      - insight
 
   db:
     image: postgres:16-alpine
@@ -24,16 +18,22 @@ services:
     ports: ["5432:5432"]
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - insight
 
   whisper:
     build: ./whisper
     ports: ["8001:8000"]
+    networks:
+      - insight
 
   embeddings:
     build: ./embeddings
     ports: ["8002:8000"]
     environment:
       HF_TOKEN: ${HF_TOKEN}
+    networks:
+      - insight
 
   diarization:
     build: ./diarization
@@ -44,20 +44,21 @@ services:
       HF_TOKEN: ${HF_TOKEN}
     volumes:
       - hfcache:/root/.cache/huggingface
+    networks:
+      - insight
 
   baseline:
     build: ./baseline
+    env_file:
+      - ./baseline/.env
     ports: ["8004:8000"]
-    environment:
-      SCHEMAS_DIR: /schemas
-      BASELINE_SCHEMA: v1
-      BASELINE_DATA: /train
     volumes:
-      # the schema files are the single source of truth, mounted read-only from core
       - ./insight-core/schemas:/schemas:ro
       # p1 training data (built by convert_abcd.py --train-out); when absent, training
       # falls back to the bundled fixtures
       - ./evaluation/data/abcd-train:/train:ro
+    networks:
+      - insight
 
   ollama:
     build: ./ollama
@@ -67,12 +68,21 @@ services:
       OLLAMA_CONTEXT_LENGTH: "8192"
     volumes:
       - ollama:/root/.ollama
+    networks:
+      - insight
 
-  # web:
-  #   build: ./insight-web
-  #   ports: ["3000:3000"]
+  web:
+    env_file:
+      - ./insight-web/.env
+    build: ./insight-web
+    ports: ["3000:3000"]
 
 volumes:
   ollama:
   pgdata:
   hfcache:
+
+networks:
+  insight:
+    name: insight-network
+    driver: bridge

@@ -1,5 +1,7 @@
 const baseUrl = import.meta.env.VITE_API_URL;
 
+console.log({ baseUrl });
+
 // a request is sent and the parsed json body is returned
 async function request(path, options) {
   const res = await fetch(`${baseUrl}${path}`, options);
@@ -37,9 +39,9 @@ export function getSchemas() {
   return request('/schemas');
 }
 
-// value counts for one schema version, optionally filtered to one pipeline
-export function getSchemaSummary(name, version, pipeline) {
-  const params = new URLSearchParams({ version });
+// value counts for one schema, optionally filtered to one pipeline
+export function getSchemaSummary(name, pipeline) {
+  const params = new URLSearchParams();
   if (pipeline) params.set('pipeline', pipeline);
   return request(`/schemas/${name}/summary?${params}`);
 }
