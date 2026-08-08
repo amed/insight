@@ -6,5 +6,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# the model is trained from the pilot data at container start, so it can never go stale
+# /app/data is the dataprep training output, mounted read-only by compose.
+# train.py runs once and reuses the artifact while the schema claim matches.
 CMD ["sh", "-c", "python train.py && uvicorn main:app --host 0.0.0.0 --port 8000"]
