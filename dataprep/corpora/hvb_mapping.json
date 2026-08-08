@@ -1,0 +1,14 @@
+{
+  "schema": "v1",
+  "_note": "Null means unmapped: intent is excluded from scoring for that record.",
+  "task_to_intent": {
+    "check balance": "information_request",
+    "get branch hours": "information_request",
+    "order checks": null,
+    "pay bill": null,
+    "replace card": "replacement_request",
+    "reset password": "account_access",
+    "schedule appointment": null,
+    "transfer money": null
+  }
+}

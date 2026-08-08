@@ -1,0 +1,36 @@
+{
+  "name": "v1-old",
+  "version": 1,
+  "fields": [
+    {
+      "name": "intent",
+      "question": "what does the customer want?",
+      "values": ["refund_request", "account_access", "complaint", "replacement_request", "information_request"]
+    },
+    {
+      "name": "issue_type",
+      "question": "what kind of problem or issue is described?",
+      "values": ["billing_error", "account_access", "delivery_problem", "product_defect", "none"]
+    },
+    {
+      "name": "sentiment",
+      "question": "how does the customer feel, positive, negative, or neutral?",
+      "values": ["positive", "neutral", "negative"]
+    },
+    {
+      "name": "resolution_status",
+      "question": "was the issue resolved?",
+      "values": ["resolved", "partially_resolved", "unresolved"]
+    },
+    {
+      "name": "risk",
+      "question": "is there a risk of churn, escalation, or complaint?",
+      "values": ["none", "low", "high"]
+    },
+    {
+      "name": "next_action",
+      "question": "what is the next action or follow-up?",
+      "values": ["refund_or_credit", "replacement_or_repair", "escalation", "follow_up_contact", "information_provided", "none"]
+    }
+  ]
+}

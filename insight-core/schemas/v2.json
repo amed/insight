@@ -1,6 +1,6 @@
 {
-  "name": "v1",
-  "version": 2,
+  "name": "v2",
+  "version": 1,
   "fields": [
     {
       "name": "intent",
@@ -26,6 +26,11 @@
       "name": "agent_action",
       "question": "what did the agent do to handle the request?",
       "values": ["refund_or_credit", "update_order", "update_account", "escalate", "provide_information", "none"]
+    },
+    {
+      "name": "banking_task",
+      "question": "which banking task does the call concern?",
+      "values": ["check_balance", "get_branch_hours", "order_checks", "pay_bill", "replace_card", "reset_password", "schedule_appointment", "transfer_money"]
     }
   ]
 }
