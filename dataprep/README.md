@@ -15,17 +15,6 @@ python3 validate.py   # check everything prepare.py produced
 To rebuild from scratch, delete output (a file under `out/training/`, a batch directory
 under `out/testing/`, a corpus under `data/`).
 
-## Layout
-
-```
-data/            raw corpora, downloaded once (about 3.5 gb, mostly hvb audio)
-out/training/    baseline training files: one [{text, label}] json per field,
-                 plus maia_holdout.json (dialogue ids reserved for testing)
-out/testing/     one directory per batch: records/, gold.json, manifest.json
-corpora/         one module per corpus: files, structure, label rules,
-                 plus the reviewed mapping files (abcd_mapping.json, hvb_mapping.json)
-```
-
 ## What is prepared
 
 Training (used only by the baseline, `baseline/train.py` reads `out/training/`):
@@ -58,7 +47,8 @@ Testing (uploaded to the pipelines by the evaluation, never trained on):
 
 ## Licenses
 
-ABCD MIT, HVB CC BY 4.0, EmoWOZ CC BY-NC 4.0 (non-commercial), MAIA-DQE CC
-BY-ND 4.0 (no derivatives: the converted maia records must stay out of any
-public repository). `data/` and `out/` are gitignored. The MAIA customer side
-is machine-translated english; state this as a limitation when reporting.
+- ABCD: MIT
+- HVB: CC BY 4.0
+- EmoWOZ: CC BY-NC 4.0 (non-commercial)
+- MAIA-DQE: CC BY-ND 4.0 (no derivatives: the converted maia records must stay
+  out of any public repository)

@@ -49,14 +49,12 @@ services:
 
   baseline:
     build: ./baseline
-    env_file:
-      - ./baseline/.env
     ports: ["8004:8000"]
     volumes:
+      # the schema files are the single source of truth, mounted read-only from core
       - ./insight-core/schemas:/schemas:ro
-      # p1 training data (built by convert_abcd.py --train-out); when absent, training
-      # falls back to the bundled fixtures
-      - ./evaluation/data/abcd-train:/train:ro
+      # training files prepared by dataprep/prepare.py, mounted read-only
+      - ./dataprep/out/training:/app/data:ro
     networks:
       - insight
 
