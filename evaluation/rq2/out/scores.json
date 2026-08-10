@@ -1,0 +1,111 @@
+{
+  "p2": {
+    "abcd-text": {
+      "fields": 917,
+      "claim_bearing": 419,
+      "supported": 419,
+      "uncited": 0,
+      "invalid_cited": 0,
+      "coerced": 0,
+      "not_complete": 0,
+      "ucr": 0.0,
+      "validity": 1.0
+    },
+    "hvb-audio": {
+      "fields": 250,
+      "claim_bearing": 86,
+      "supported": 86,
+      "uncited": 0,
+      "invalid_cited": 0,
+      "coerced": 0,
+      "not_complete": 0,
+      "ucr": 0.0,
+      "validity": 1.0
+    },
+    "maia-text": {
+      "fields": 473,
+      "claim_bearing": 344,
+      "supported": 344,
+      "uncited": 0,
+      "invalid_cited": 0,
+      "coerced": 0,
+      "not_complete": 0,
+      "ucr": 0.0,
+      "validity": 1.0
+    },
+    "overall": {
+      "fields": 1640,
+      "claim_bearing": 849,
+      "supported": 849,
+      "uncited": 0,
+      "invalid_cited": 0,
+      "coerced": 0,
+      "not_complete": 0,
+      "ucr": 0.0,
+      "validity": 1.0
+    }
+  },
+  "p3": {
+    "abcd-text": {
+      "fields": 894,
+      "claim_bearing": 666,
+      "supported": 666,
+      "uncited": 0,
+      "invalid_cited": 0,
+      "coerced": 0,
+      "not_complete": 0,
+      "ucr": 0.0,
+      "validity": 1.0
+    },
+    "hvb-audio": {
+      "fields": 246,
+      "claim_bearing": 161,
+      "supported": 161,
+      "uncited": 0,
+      "invalid_cited": 0,
+      "coerced": 0,
+      "not_complete": 0,
+      "ucr": 0.0,
+      "validity": 1.0
+    },
+    "maia-text": {
+      "fields": 468,
+      "claim_bearing": 408,
+      "supported": 407,
+      "uncited": 0,
+      "invalid_cited": 1,
+      "coerced": 0,
+      "not_complete": 0,
+      "ucr": 0.0024509803921568627,
+      "validity": 1.0
+    },
+    "overall": {
+      "fields": 1608,
+      "claim_bearing": 1235,
+      "supported": 1234,
+      "uncited": 0,
+      "invalid_cited": 1,
+      "coerced": 0,
+      "not_complete": 0,
+      "ucr": 0.0008097165991902834,
+      "validity": 1.0
+    }
+  },
+  "criteria": {
+    "ucr_p2_lt_p3": {
+      "p2": 0.0,
+      "p3": 0.0008097165991902834,
+      "met": true
+    },
+    "validity_ge_95": {
+      "p2": {
+        "validity": 1.0,
+        "met": true
+      },
+      "p3": {
+        "validity": 1.0,
+        "met": true
+      }
+    }
+  }
+}
