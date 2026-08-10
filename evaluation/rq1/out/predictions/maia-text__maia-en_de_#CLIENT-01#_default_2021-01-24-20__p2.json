@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "sentiment": "positive",
+    "agent_action": "refund_or_credit",
+    "resolution_status": "resolved",
+    "issue_type": "product_defect"
+  },
+  "config_version": "llama3.1|top5|prompt2"
+}

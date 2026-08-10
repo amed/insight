@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "issue_type": "delivery_problem",
+    "resolution_status": "unresolved",
+    "sentiment": "positive",
+    "agent_action": "provide_information",
+    "intent": "complaint"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

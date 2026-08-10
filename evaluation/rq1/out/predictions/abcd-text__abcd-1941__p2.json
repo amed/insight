@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "resolution_status": "resolved",
+    "sentiment": "unknown",
+    "issue_type": "none",
+    "intent": "unknown",
+    "agent_action": "update_account"
+  },
+  "config_version": "llama3.1|top5|prompt2"
+}

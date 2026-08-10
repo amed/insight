@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "sentiment": "positive",
+    "issue_type": "billing_error",
+    "agent_action": "refund_or_credit",
+    "intent": "complaint",
+    "resolution_status": "unresolved"
+  },
+  "config_version": "tfidf-logreg|3eef3375eda46d"
+}

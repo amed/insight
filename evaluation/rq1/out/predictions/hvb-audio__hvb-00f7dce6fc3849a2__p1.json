@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "agent_action": "update_account",
+    "sentiment": "negative",
+    "resolution_status": "unresolved",
+    "issue_type": "account_access",
+    "intent": "complaint"
+  },
+  "config_version": "tfidf-logreg|3eef3375eda46d"
+}

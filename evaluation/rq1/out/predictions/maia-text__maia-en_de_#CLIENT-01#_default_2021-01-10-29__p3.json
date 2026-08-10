@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "issue_type": "product_defect",
+    "sentiment": "positive",
+    "resolution_status": "resolved",
+    "agent_action": "update_order"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "sentiment": "neutral",
+    "resolution_status": "resolved",
+    "intent": "replacement_request",
+    "issue_type": "none"
+  },
+  "config_version": "llama3.1|top5|prompt2"
+}

@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "resolution_status": "resolved",
+    "intent": "account_access",
+    "issue_type": "billing_error",
+    "agent_action": "update_account",
+    "sentiment": "positive"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

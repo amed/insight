@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "intent": "refund_request",
+    "issue_type": "product_defect",
+    "sentiment": "negative",
+    "resolution_status": "unresolved",
+    "agent_action": "refund_or_credit"
+  },
+  "config_version": "tfidf-logreg|3eef3375eda46d"
+}

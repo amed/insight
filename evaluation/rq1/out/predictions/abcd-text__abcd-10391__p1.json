@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "resolution_status": "unresolved",
+    "sentiment": "negative",
+    "intent": "information_request",
+    "agent_action": "none",
+    "issue_type": "delivery_problem"
+  },
+  "config_version": "tfidf-logreg|3eef3375eda46d"
+}

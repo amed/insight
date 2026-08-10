@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "agent_action": "none",
+    "issue_type": "none",
+    "resolution_status": "resolved",
+    "intent": "unknown",
+    "sentiment": "neutral"
+  },
+  "config_version": "llama3.1|top5|prompt2"
+}

@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "agent_action": "none",
+    "sentiment": "neutral",
+    "intent": "information_request",
+    "issue_type": "billing_error",
+    "resolution_status": "unresolved"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

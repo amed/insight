@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "sentiment": "positive",
+    "issue_type": "product_defect",
+    "agent_action": "provide_information",
+    "intent": "replacement_request",
+    "resolution_status": "unresolved"
+  },
+  "config_version": "tfidf-logreg|3eef3375eda46d"
+}

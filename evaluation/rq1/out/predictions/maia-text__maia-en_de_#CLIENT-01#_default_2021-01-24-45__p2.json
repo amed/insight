@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "sentiment": "negative",
+    "resolution_status": "unresolved",
+    "intent": "complaint",
+    "agent_action": "escalate"
+  },
+  "config_version": "llama3.1|top5|prompt2"
+}

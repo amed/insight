@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "agent_action": "provide_information",
+    "intent": "account_access",
+    "issue_type": "account_access",
+    "resolution_status": "resolved",
+    "sentiment": "neutral"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

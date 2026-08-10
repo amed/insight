@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "intent": "refund_request",
+    "agent_action": "refund_or_credit",
+    "issue_type": "delivery_problem",
+    "resolution_status": "resolved",
+    "sentiment": "positive"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

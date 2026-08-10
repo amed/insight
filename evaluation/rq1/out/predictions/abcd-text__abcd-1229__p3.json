@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "sentiment": "neutral",
+    "intent": "replacement_request",
+    "issue_type": "product_defect",
+    "agent_action": "update_account"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

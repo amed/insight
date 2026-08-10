@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "intent": "replacement_request",
+    "issue_type": "account_access",
+    "agent_action": "update_account",
+    "sentiment": "positive"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

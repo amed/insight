@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "agent_action": "provide_information",
+    "intent": "complaint",
+    "sentiment": "negative",
+    "resolution_status": "unknown",
+    "issue_type": "product_defect"
+  },
+  "config_version": "llama3.1|top5|prompt2"
+}

@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "intent": "information_request",
+    "resolution_status": "unresolved",
+    "sentiment": "positive",
+    "issue_type": "none"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

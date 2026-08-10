@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "agent_action": "update_order",
+    "intent": "information_request",
+    "issue_type": "delivery_problem",
+    "resolution_status": "unresolved",
+    "sentiment": "positive"
+  },
+  "config_version": "tfidf-logreg|3eef3375eda46d"
+}

@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "agent_action": "update_order",
+    "sentiment": "positive",
+    "resolution_status": "unresolved",
+    "intent": "complaint"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "fields": {
+    "sentiment": "positive",
+    "issue_type": "delivery_problem",
+    "resolution_status": "resolved",
+    "agent_action": "update_order",
+    "intent": "replacement_request"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}

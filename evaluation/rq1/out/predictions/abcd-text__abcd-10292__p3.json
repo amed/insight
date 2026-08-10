@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "fields": {
+    "resolution_status": "resolved",
+    "agent_action": "provide_information",
+    "intent": "information_request",
+    "issue_type": "none"
+  },
+  "config_version": "llama3.1|full|prompt2"
+}
