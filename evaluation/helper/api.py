@@ -3,22 +3,15 @@ Core api calls
 ==============
 
 predict runs one record through one pipeline: upload as multipart form data,
-then poll until the record leaves pending or the deadline passes. The stored
-prediction also carries the evidence core kept per field (citations, dropped
-citations, coercion), so rq2 can be answered from the same files without
-uploading anything twice.
+then poll until the record leaves pending or the deadline passes.
 
 =============================================================================
 Data shapes:
 
 prediction (returned by predict, stored by the rq runners):
-  status:            complete | failed | timeout
-  api_id:            int (the interaction id in core, for later lookups)
-  fields:            {field: predicted value}
-  citations:         {field: [line ids that survived the grounding filter]}
-  dropped_citations: {field: [cited line ids the filter rejected]}
-  coerced:           {field: bool (the first answer was off-schema)}
-  config_version:    str (what configuration produced the record)
+  status:         complete | failed | timeout
+  fields:         {field: predicted value}
+  config_version: str (what configuration produced the record)
 """
 
 import json
@@ -47,26 +40,6 @@ def request(method, url, body=None, headers=None):
     return json.loads(res.read())
 
 
-# The per-field evidence, read from the record and its step trace. Core writes
-# one extract:<field> step per field with the coercion flag and the citations
-# its grounding filter dropped
-def evidence(core, api_id, record_data):
-  steps = request("GET", f"{core}/interactions/{api_id}/steps")
-  coerced = {}
-  dropped = {}
-  for step in steps:
-    if step["name"].startswith("extract:") and step["status"] == "ok":
-      field = step["name"].split(":", 1)[1]
-      coerced[field] = bool(step["detail"].get("coerced", False))
-      dropped[field] = step["detail"].get("dropped_citations", [])
-
-  return {
-    "citations": {f["name"]: f.get("citations", []) for f in record_data.get("fields", [])},
-    "dropped_citations": dropped,
-    "coerced": coerced,
-  }
-
-
 # One record through one pipeline via the core api:
 # upload, then poll until the record leaves pending or the deadline passes.
 # The interaction id is suffixed so reruns never collide with the unique constraint
@@ -83,17 +56,11 @@ def predict(core, record, pipeline, timeout=900):
     data = request("GET", f"{core}/interactions/{created['id']}")
     status = (data.get("record") or {}).get("status")
     if status in ("complete", "failed"):
-      extra = evidence(core, created["id"], data["record"])
       return {
         "status": status,
-        "api_id": created["id"],
         "fields": {f["name"]: f["value"] for f in data["record"].get("fields", [])},
-        "citations": extra["citations"],
-        "dropped_citations": extra["dropped_citations"],
-        "coerced": extra["coerced"],
         "config_version": data["record"].get("config_version"),
       }
     time.sleep(2)
 
-  return {"status": "timeout", "api_id": created["id"], "fields": {}, "citations": {},
-          "dropped_citations": {}, "coerced": {}, "config_version": None}
+  return {"status": "timeout", "fields": {}, "config_version": None}

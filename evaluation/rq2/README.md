@@ -15,11 +15,11 @@ Evaluation schema is pinned to `insight-core/schemas/v1.json` through all phases
 
 ### Prepare The Data (Stage 1)
 
-Collect rq1's stored P2 and P3 prediction files. Nothing is uploaded twice: rq1 already runs both pipelines on every record and its predictions carry the citations and trace flags core kept per field.
+Load the same records rq1 evaluates, straight from the dataprep batches. rq2 is self-contained: everything it produces lives under its own out/ directory, rq1's files are never modified.
 
-### Backfill (Stage 2)
+### Collect (Stage 2)
 
-Prediction files written before the evidence fields existed are upgraded in place from core's stored interactions (found by their interaction id prefix, the newest complete one wins).
+One evidence prediction per record x P2/P3 in rq2's own out/predictions: copied from rq1's stored prediction when that file already carries the evidence keys, run fresh through the core API otherwise, skipped when it already exists (resume).
 
 ### Extract Evidence (Stage 3)
 
