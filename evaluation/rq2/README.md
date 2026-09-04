@@ -15,11 +15,11 @@ Evaluation schema is pinned to `insight-core/schemas/v1.json` through all phases
 
 ### Prepare The Data (Stage 1)
 
-Load the same records rq1 evaluates, straight from the dataprep batches. rq2 is self-contained: everything it produces lives under its own out/ directory, rq1's files are never modified.
+The one cycle (`evaluation/run.py`) runs every record through P2 and P3 exactly once and stores the citations and trace flags with each prediction. This module only reads that store.
 
 ### Collect (Stage 2)
 
-One evidence prediction per record x P2/P3 in rq2's own out/predictions: copied from rq1's stored prediction when that file already carries the evidence keys, run fresh through the core API otherwise, skipped when it already exists (resume).
+Collect the stored P2 and P3 predictions of the text and oracle variants; the audio variants belong to rq3.
 
 ### Extract Evidence (Stage 3)
 

@@ -1,0 +1,52 @@
+{
+  "p1": {
+    "cells": 50,
+    "failed": 50
+  },
+  "p2": {
+    "banking_task_accuracy": 0.64,
+    "intent_accuracy": 0.11538461538461539,
+    "banking_scored": 50,
+    "intent_scored": 26,
+    "supported_banking_claims": 32,
+    "fields": 219,
+    "coerced": 0,
+    "validity": 1.0,
+    "not_complete": 0
+  },
+  "p3": {
+    "banking_task_accuracy": 0.46,
+    "intent_accuracy": 0.46153846153846156,
+    "banking_scored": 50,
+    "intent_scored": 26,
+    "supported_banking_claims": 23,
+    "fields": 152,
+    "coerced": 0,
+    "validity": 1.0,
+    "not_complete": 0
+  },
+  "criteria": {
+    "validity_ge_95": {
+      "p2": {
+        "validity": 1.0,
+        "met": true
+      },
+      "p3": {
+        "validity": 1.0,
+        "met": true
+      }
+    },
+    "banking_within_10_of_intent": {
+      "p2": {
+        "banking_task": 0.64,
+        "intent": 0.11538461538461539,
+        "met": true
+      },
+      "p3": {
+        "banking_task": 0.46,
+        "intent": 0.46153846153846156,
+        "met": true
+      }
+    }
+  }
+}

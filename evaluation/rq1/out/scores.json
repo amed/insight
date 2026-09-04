@@ -25,22 +25,22 @@
     },
     "p2": {
       "agent_action": {
-        "accuracy": 0.27419354838709675,
-        "macro_f1": 0.3555508104278127,
+        "accuracy": 0.26344086021505375,
+        "macro_f1": 0.3520708121876841,
         "scored": 186,
-        "correct": 51,
+        "correct": 49,
         "not_complete": 0
       },
       "intent": {
-        "accuracy": 0.42528735632183906,
-        "macro_f1": 0.3290287134680727,
+        "accuracy": 0.4425287356321839,
+        "macro_f1": 0.2973346828609986,
         "scored": 174,
-        "correct": 74,
+        "correct": 77,
         "not_complete": 0
       },
       "issue_type": {
         "accuracy": 0.34408602150537637,
-        "macro_f1": 0.33543033194195987,
+        "macro_f1": 0.3348655682832735,
         "scored": 186,
         "correct": 64,
         "not_complete": 0
@@ -48,24 +48,24 @@
     },
     "p3": {
       "agent_action": {
-        "accuracy": 0.532258064516129,
-        "macro_f1": 0.4576204436553713,
+        "accuracy": 0.5268817204301075,
+        "macro_f1": 0.44692155722858856,
         "scored": 186,
-        "correct": 99,
+        "correct": 98,
         "not_complete": 0
       },
       "intent": {
-        "accuracy": 0.7528735632183908,
-        "macro_f1": 0.58392569922958,
+        "accuracy": 0.735632183908046,
+        "macro_f1": 0.5731954320189614,
         "scored": 174,
-        "correct": 131,
+        "correct": 128,
         "not_complete": 0
       },
       "issue_type": {
-        "accuracy": 0.6075268817204301,
-        "macro_f1": 0.5116286969126588,
+        "accuracy": 0.6129032258064516,
+        "macro_f1": 0.5110103874620003,
         "scored": 186,
-        "correct": 113,
+        "correct": 114,
         "not_complete": 0
       }
     }
@@ -119,32 +119,32 @@
     "p2": {
       "resolution_status": {
         "accuracy": 0.32954545454545453,
-        "macro_f1": 0.3958960843373494,
+        "macro_f1": 0.39912029068655575,
         "scored": 88,
         "correct": 29,
         "not_complete": 0
       },
       "sentiment": {
-        "accuracy": 0.37,
-        "macro_f1": 0.3278048780487805,
+        "accuracy": 0.42,
+        "macro_f1": 0.3804505772377258,
         "scored": 100,
-        "correct": 37,
+        "correct": 42,
         "not_complete": 0
       }
     },
     "p3": {
       "resolution_status": {
-        "accuracy": 0.5909090909090909,
-        "macro_f1": 0.6277289019224503,
+        "accuracy": 0.5681818181818182,
+        "macro_f1": 0.6092338574774172,
         "scored": 88,
-        "correct": 52,
+        "correct": 50,
         "not_complete": 0
       },
       "sentiment": {
-        "accuracy": 0.49,
-        "macro_f1": 0.4050179211469534,
+        "accuracy": 0.51,
+        "macro_f1": 0.42094768942059585,
         "scored": 100,
-        "correct": 49,
+        "correct": 51,
         "not_complete": 0
       }
     }

@@ -20,15 +20,16 @@ import urllib.request
 import uuid
 
 
-# Multipart body built by hand, stdlib has no builder (RFC 7578)
-def multipart(fields, file_name, file_bytes):
+# Multipart body built by hand, stdlib has no builder (RFC 7578).
+# content_type is the file part's type: application/json for records, audio/wav for wavs
+def multipart(fields, file_name, file_bytes, content_type="application/json"):
   boundary = f"----rq{uuid.uuid4().hex}"
   parts = b""
   for name, value in fields.items():
     parts += (f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"'
               f"\r\n\r\n{value}\r\n").encode()
   parts += (f'--{boundary}\r\nContent-Disposition: form-data; name="file"; '
-            f'filename="{file_name}"\r\nContent-Type: application/json\r\n\r\n').encode()
+            f'filename="{file_name}"\r\nContent-Type: {content_type}\r\n\r\n').encode()
   body = parts + file_bytes + f"\r\n--{boundary}--\r\n".encode()
 
   return body, {"Content-Type": f"multipart/form-data; boundary={boundary}"}

@@ -17,7 +17,7 @@ Load the dataset directory and pair each record with its gold labels.
 
 ### Runner (Stage 2)
 
-Run every record through each of the three pipelines via the core API and collect the predicted fields.
+The one cycle (`evaluation/run.py`) runs every record through each of the three pipelines via the core API, exactly once for all four research questions. This module only reads its prediction store.
 
 ### Store Scores (Stage 3)
 
