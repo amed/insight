@@ -69,7 +69,14 @@ def request_retry(method, url):
 OUT = Path(__file__).parent.joinpath("out", "predictions")
 RQ_SCORERS = ("rq1", "rq2", "rq3", "rq4")
 
-# Old prediction stores, read-only seed sources
+# Old prediction stores, read-only seed sources.
+# TODO: dead code. Remove seed(), its call in main(), and stage 1 of the docstring.
+# Before the suite was consolidated into one runner,
+# rq1 and rq2 each uploaded their own cells into these two directories.
+# seed() copied them forward into the single store,
+# so a finished cell was never re-run at minutes of cpu each.
+# Both directories were removed with the evaluation reconstruction,
+# so the paths no longer resolve and seed() skips every cell.
 RQ1_OLD = Path(__file__).parent.joinpath("rq1", "out", "predictions")
 RQ2_OLD = Path(__file__).parent.joinpath("rq2", "out", "predictions")
 

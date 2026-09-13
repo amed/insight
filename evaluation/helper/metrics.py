@@ -2,11 +2,12 @@
 Scoring metrics
 ===============
 
-accuracy and macro_f1 work on (gold, predicted) pairs, wer and role_accuracy
-on produced text against reference turns. Everything returns None when nothing
-was scored, so an empty slice can never masquerade as a perfect one.
+accuracy and macro_f1 work on (gold, predicted) pairs, bootstrap_ci wraps
+either of them in a percentile interval, wer and role_accuracy work on produced text against reference turns.
+Everything returns None when nothing was scored, so an empty slice can never masquerade as a perfect one.
 """
 
+import random
 import re
 
 
@@ -40,8 +41,24 @@ def macro_f1(pairs, classes):
   return sum(scores) / len(scores) if scores else None
 
 
-# One pinned normalization for every wer and role comparison: lowercase, strip
-# every character that is not a letter, digit, or whitespace, collapse whitespace
+# Percentile bootstrap interval of a statistic over (gold, predicted) pairs:
+# the records are resampled with replacement, the statistic is recomputed on each resample,
+# and the 2.5th and 97.5th percentiles are returned.
+# The seed is fixed so the interval is reproducible from the same store
+def bootstrap_ci(pairs, statistic, resamples=3000, seed=0):
+  if not pairs:
+    return None
+
+  rng = random.Random(seed)
+  n = len(pairs)
+  values = sorted(statistic([pairs[rng.randrange(n)] for _ in range(n)])
+                  for _ in range(resamples))
+
+  return [values[int(0.025 * resamples)], values[int(0.975 * resamples) - 1]]
+
+
+# One pinned normalization for every wer and role comparison:
+# lowercase, strip every character that is not a letter, digit, or whitespace, collapse whitespace
 def normalize(text):
   text = text.lower()
   text = re.sub(r"[^a-z0-9\s]", "", text)
@@ -75,11 +92,10 @@ def wer(reference, hypothesis):
   return dp[-1][-1] / len(ref) if ref else None
 
 
-# Line-level speaker agreement against known roles. Positional comparison is
-# wrong when asr segments the audio differently than the reference turns, so
-# each produced line is matched to the reference turn with the largest word
-# overlap and judged against that turn's speaker. Lines sharing no word with
-# any turn are skipped
+# Line-level speaker agreement against known roles.
+# Positional comparison is wrong when asr segments the audio differently than the reference turns,
+# so each produced line is matched to the reference turn with the largest word overlap and judged against that turn's speaker.
+# Lines sharing no word with any turn are skipped
 def role_accuracy(lines, turns):
   turn_words = [set(normalize(turn["text"]).split()) for turn in turns]
   correct = 0

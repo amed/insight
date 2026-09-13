@@ -12,7 +12,8 @@ Which batch scores which fields (gold exists nowhere else):
 
 Only complete predictions are scored: a failed or timed out prediction is not
 a wrong answer, it is counted separately as not_complete so an infrastructure
-problem never lowers a pipeline's accuracy.
+problem never lowers a pipeline's accuracy. Abstentions (unknown) are scored as incorrect and counted separately.
+Accuracy and macro-f1 carry a 95 percent percentile-bootstrap interval over records (3,000 resamples, fixed seed).
 
 Usage
 -----
@@ -26,7 +27,9 @@ out/results.csv columns:
   (empty gold = the record has no gold for that field, excluded from scores)
 
 out/scores.json:
-  batch -> pipeline -> field -> {accuracy, macro_f1, scored, correct, not_complete}
+  batch -> pipeline -> field ->
+    {accuracy, accuracy_ci, macro_f1, macro_f1_ci, scored, correct,
+     unknown, unknown_rate, not_complete}
 """
 
 import json
@@ -90,11 +93,17 @@ def scores(all_gold):
   for key in sorted(set(pairs) | set(not_complete)):
     batch, pipeline, field = key
     scored = pairs.get(key, [])
+    classes = values[field]
+    unknown = sum(1 for _, predicted in scored if predicted == "unknown")
     summary.setdefault(batch, {}).setdefault(pipeline, {})[field] = {
       "accuracy": metrics.accuracy(scored),
-      "macro_f1": metrics.macro_f1(scored, values[field]),
+      "accuracy_ci": metrics.bootstrap_ci(scored, metrics.accuracy),
+      "macro_f1": metrics.macro_f1(scored, classes),
+      "macro_f1_ci": metrics.bootstrap_ci(scored, lambda p: metrics.macro_f1(p, classes)),
       "scored": len(scored),
       "correct": sum(1 for gold, predicted in scored if gold == predicted),
+      "unknown": unknown,
+      "unknown_rate": unknown / len(scored) if scored else None,
       "not_complete": not_complete.get(key, 0),
     }
 
