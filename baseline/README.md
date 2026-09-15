@@ -1,19 +1,20 @@
 # Baseline (P1)
 
-TF-IDF + one logistic regression per schema field.
-Training data must be prepared by the `dataprep` module. Baline module only trains and serves.
+TF-IDF with one logistic regression classifier per field. Produces values without citations.
+
+Prepare the [training data](../dataprep/README.md), then run from the repository root:
 
 ```bash
-python3 train.py # fit the classifiers, save model.joblib
+docker compose up --build baseline
 ```
 
-`train.py` reads `dataprep/out/training/` (in docker: `/app/data`, mounted by
-compose) and saves `model.joblib` with the v1 schema claim (name + hash). An
-existing artifact is reused only while its claim matches the current schema,
-so a schema change retrains automatically. `main.py` serves `/extract`: all
-field values from one call, the model version and the schema claim ride along,
-and core fails any p1 record whose schema does not match the claim.
+The container trains before serving `POST /extract` on port 8004.
 
-Where every training label comes from, how the test batches are built, and
-the split discipline (training and testing never share a conversation) are
-documented in `dataprep/README.md` and enforced by `dataprep/validate.py`.
+For local training:
+
+```bash
+python3 -m pip install -r baseline/requirements.txt
+python3 baseline/train.py
+```
+
+The model is saved as `baseline/model.joblib`. P1 is trained for the five v1 fields; core rejects a record if the model's schema name or hash does not match it.

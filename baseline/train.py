@@ -49,8 +49,8 @@ from sklearn.linear_model import LogisticRegression
 
 ARTIFACT = Path(__file__).parent.joinpath("model.joblib")
 
-# Prepared training data and the pinned v1 schema: from the repo locally,
-# from the read-only mounts in docker
+# Prepared training data and the pinned v1 schema are read from the repo locally,
+# and from the read-only mounts in docker.
 DATA = Path(__file__).parent.parent.joinpath("dataprep", "out", "training")
 if not DATA.exists():
   DATA = Path("/app/data")
@@ -66,8 +66,8 @@ def train(raw_schema, schema):
   if set(allowed) != set(TRAINED_FIELDS):
     sys.exit(f"schema fields {sorted(allowed)} do not match trained fields {sorted(TRAINED_FIELDS)}")
 
-  # The prepared data carries the schema it was built for. A mismatch means the
-  # schema changed after preparation and the data must be rebuilt first
+  # The prepared data carries the schema it was built for.
+  # A mismatch means the schema changed after preparation and the data must be rebuilt first.
   schema_hash = hashlib.sha256(raw_schema).hexdigest()[:14]
   manifest_file = DATA.joinpath("manifest.json")
   if not manifest_file.exists():
@@ -89,8 +89,8 @@ def train(raw_schema, schema):
     fields[field] = json.loads(raw)
 
   # One shared vectorizer over every training text, then one classifier per field.
-  # Balanced class weights because macro-f1 is the evaluation metric and the
-  # emowoz sentiment labels are heavily skewed toward positive
+  # Balanced class weights because macro-f1 is the evaluation metric,
+  # and the emowoz sentiment labels are heavily skewed toward positive.
   texts = sorted({example["text"] for examples in fields.values() for example in examples})
   row_of = {text: i for i, text in enumerate(texts)}
   vectorizer = TfidfVectorizer()
@@ -125,7 +125,7 @@ def main():
   raw_schema = SCHEMA_FILE.read_bytes()
   schema_hash = hashlib.sha256(raw_schema).hexdigest()[:14]
 
-  # An existing artifact is reused only while its claim matches the current schema
+  # An existing artifact is reused only while its claim matches the current schema.
   if ARTIFACT.exists():
     if joblib.load(ARTIFACT).get("schema_hash") == schema_hash:
       print(f"model exists at {ARTIFACT} and matches the schema, training skipped")

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-# the artifact is produced by train.py at container start and loaded once
+# The artifact is produced by train.py at container start and loaded once.
 bundle = joblib.load(Path(__file__).parent / "model.joblib")
 
 
@@ -19,8 +19,8 @@ class Request(BaseModel):
   lines: list[Line]
 
 
-# all field values are predicted from the flattened conversation in one call. the schema
-# claim (id and hash the artifact was trained for) rides along so core can refuse a mismatch.
+# All field values are predicted from the flattened conversation in one call.
+# The schema claim (id and hash the artifact was trained for) rides along so core can refuse a mismatch.
 @app.post("/extract")
 def extract(req: Request):
   text = " ".join(f"{line.speaker}: {line.text}" for line in req.lines)
