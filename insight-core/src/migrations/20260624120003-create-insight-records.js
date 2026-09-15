@@ -7,7 +7,7 @@ module.exports = {
       interaction_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true, // one record per interaction
+        unique: true, // One record per interaction
         references: { model: 'interactions', key: 'id' },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',

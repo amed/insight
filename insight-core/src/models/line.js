@@ -5,7 +5,7 @@ module.exports = (sequelize) => {
 
   Line.init(
     {
-      lineId: { type: DataTypes.TEXT, allowNull: false }, // stable id, e.g. "L0001"
+      lineId: { type: DataTypes.TEXT, allowNull: false }, // Stable id, e.g. "L0001"
       ordinal: { type: DataTypes.INTEGER, allowNull: false },
       speaker: { type: DataTypes.TEXT, allowNull: false },
       text: { type: DataTypes.TEXT, allowNull: false },

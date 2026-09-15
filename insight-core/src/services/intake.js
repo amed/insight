@@ -7,7 +7,7 @@ const config = require('../config');
 
 const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.m4a', '.ogg', '.flac', '.webm'];
 
-// whether the uploaded file is audio, decided by mimetype or extension
+// Whether the uploaded file is audio, decided by mimetype or extension.
 function isAudio(file) {
   if (file.mimetype && file.mimetype.startsWith('audio/')) {
     return true;
@@ -16,9 +16,10 @@ function isAudio(file) {
   return AUDIO_EXTENSIONS.some((ext) => name.endsWith(ext));
 }
 
-// the upload is validated and classified without any heavy work, so the request can return
-// at once. a transcript is parsed here, it is cheap and gives early validation errors. audio
-// carries no turns yet; they are produced later by ingestAudio on the background path.
+// The upload is validated and classified without any heavy work,
+// so the request can return at once.
+// A transcript is parsed here, it is cheap and gives early validation errors.
+// Audio carries no turns yet. They are produced later by ingestAudio on the background path.
 function prepare(file) {
   if (!file) {
     throw new HttpError(400, 'no file uploaded (form field name must be "file")');
@@ -30,14 +31,16 @@ function prepare(file) {
   return { kind: 'transcript', interactionId: parsed.interactionId, turns: parsed.turns };
 }
 
-// audio is turned into { speaker, text } turns. transcription runs first, then for combined
-// audio diarization decides who spoke when and the clusters are mapped to roles. the two
-// models run in sequence on purpose: each saturates the cpu, so overlapping them is slower.
+// Audio is turned into { speaker, text } turns.
+// Transcription runs first,
+// then for combined audio diarization decides who spoke when and the clusters are mapped to roles.
+// The two models run in sequence on purpose.
+// Each saturates the cpu, so overlapping them is slower.
 async function ingestAudio(file, { splitChannels = false, agentChannel = 0 } = {}) {
   const { channels, split, segments, text } = await whisperClient.transcribe(file, { split: splitChannels });
   const usable = (segments || []).filter((segment) => segment.text);
 
-  // separated channels: the speaker is the channel, no diarization needed
+  // The speaker is the channel, no diarization needed (separated channels).
   if (split && channels >= 2) {
     const turns = usable.map((segment) => ({
       speaker: segment.channel === agentChannel ? 'agent' : 'customer',
@@ -46,7 +49,7 @@ async function ingestAudio(file, { splitChannels = false, agentChannel = 0 } = {
     return { turns, ingest: { kind: 'audio', channels, split, segments: usable.length, diarization: 'skipped' } };
   }
 
-  // combined audio: diarization assigns clusters, clusters map to roles
+  // Diarization assigns clusters, clusters map to roles (combined audio).
   const diar = usable.length ? await diarizationClient.diarize(file).catch(() => null) : null;
   if (usable.length && diar && diar.turns && diar.turns.length) {
     assignClusters(usable, diar.turns);
@@ -61,7 +64,7 @@ async function ingestAudio(file, { splitChannels = false, agentChannel = 0 } = {
     };
   }
 
-  // fallback: diarization unavailable or empty, speakers stay unknown so processing still runs
+  // When diarization is unavailable or empty, speakers stay unknown so processing still runs (fallback).
   const turns = usable.length
     ? usable.map((segment) => ({ speaker: 'unknown', text: segment.text }))
     : text

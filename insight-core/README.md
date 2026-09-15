@@ -1,79 +1,50 @@
-# insight-core
+# Insight Core
 
-Backend API and orchestrator for Insight.
+API that processes uploads through P1, P2 or P3 and stores records, citations and processing traces in PostgreSQL. Use the [root setup](../README.md#run) to run it in Docker.  
 
-Upload a conversation transcript, it is stored as line-addressable units, and a (currently pending) insight record is created.
-
-TODO:
-A later slice plugs the real SBERT + LLM extraction into the processing seam (`src/services/processingService.js`). 
-
-## Run
-
-With Docker Compose from the repo root (starts Postgres + runs migrations + serves).
+Use the [root setup](../README.md#run) to run it in Docker.
 
 ## Local development (without docker)
 
-Run the dependencies in Docker and the API on your host with auto-reload (nodemon):
+Stop the Docker core with `docker compose stop core`. From this directory, copy `.env.example` to `.env` if needed and replace Docker service addresses with:
+
+| Setting | Local value |
+|---|---|
+| `DATABASE_URL` | `postgres://insight:insight@localhost:5432/insight` |
+| `WHISPER_URL` | `http://localhost:8001` |
+| `EMBEDDINGS_URL` | `http://localhost:8002` |
+| `DIARIZATION_URL` | `http://localhost:8003` |
+| `BASELINE_URL` | `http://localhost:8004` |
+| `LLM_BASE_URL` | `http://localhost:11434/v1` |
+
+Keep the other services running, then:
 
 ```bash
-# start all services in Docker
-docker compose up -d
-# stop core
-docker compose stop core
-
-# install deps and apply migrations against it
 npm install
 npm run migrate:up
-
-# run with reload on file changes
 npm run dev
 ```
 
-Connection and service URLs come from `.env` (see `.env.example`).
-
-## Endpoints
+## API
 
 ```bash
-# upload a transcript
-curl -F "file=@examples/transcript.json" localhost:4000/interactions
-# -> {"id":1,"status":"pending"}
-
-# fetch the stored interaction + its lines + record
-curl localhost:4000/interactions/1
+curl -i -F "file=@examples/transcript.json" -F "pipeline=p2" http://localhost:4000/interactions
+curl http://localhost:4000/interactions/1
+curl http://localhost:4000/interactions/1/steps
 ```
 
-Upload format:
+Replace `1` with the returned ID.  
+Poll `record.status` until it leaves `pending`.  
+Uploads accept `pipeline=p1|p2|p3` (default `p2`) and a schema name from `GET /schemas` (default `v1`).  
+Audio with separate speakers per channel can use `split_channels=true` and `agent_channel=0` or `1`.  
+`GET /` lists endpoints.  
+`GET /schemas` lists schemas.  
+Each JSON filename in [schemas](schemas/) must match its `name`.  
+Rebuild core to apply changes in Docker.  
+P1 requires a matching trained schema. [Check P1 basline](../baseline/README.md).
 
-```json
-{
-  "interaction_id": "demo-001",
-  "turns": [
-    { "speaker": "customer", "text": "..." },
-    { "speaker": "agent", "text": "..." }
-  ]
-}
-```
-
-## Migrations
-
-The schema is managed with `sequelize-cli`. Migrations apply automatically when
-the container starts; the commands below are for local/manual use.
+## Tests
 
 ```bash
-# create a new (empty) migration file in src/migrations/
-npm run migrate:make -- add-record-fields
-
-# apply all pending migrations
-npm run migrate:up
-
-# roll back the most recent migration
-npm run migrate:down
-
-# roll back every migration
-npm run migrate:down:all
+npm test -- --runInBand
 ```
-
-Each migration file has an `up` (apply) and a `down` (rollback). Keep `down` as
-the exact inverse of `up` so rollbacks are clean.
-
-The connection comes from `DATABASE_URL` (see `.env.example`).

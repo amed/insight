@@ -18,6 +18,6 @@ module.exports = {
   llmModel: process.env.LLM_MODEL || 'llama3.1',
   topK: Number(process.env.RETRIEVAL_TOP_K || 5),
 
-  // cluster to role policy: the first speaker is the agent unless this is false
+  // The first speaker is the agent unless otherwise defined (cluster to role policy).
   agentSpeaksFirst: process.env.AGENT_SPEAKS_FIRST !== 'false',
 };

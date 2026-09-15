@@ -8,7 +8,7 @@ module.exports = (sequelize) => {
       status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'pending' },
       pipeline: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'p2' }, // p1 | p2 | p3
       configVersion: { type: DataTypes.TEXT, allowNull: true },
-      // the schema the record was extracted under; null only on pre-schema legacy rows
+      // The schema the record was extracted under. Null only on pre-schema legacy rows.
       schemaName: { type: DataTypes.TEXT, allowNull: true },
       schemaVersion: { type: DataTypes.INTEGER, allowNull: true },
       schemaHash: { type: DataTypes.TEXT, allowNull: true },

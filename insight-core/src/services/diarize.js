@@ -1,13 +1,14 @@
-// pure functions that map whisper segments onto diarization turns and then onto
-// agent/customer roles. no i/o, so they are easy to reason about and to test.
+// Pure functions that map whisper segments onto diarization turns and then onto agent/customer roles.
+// No i/o, so they are easy to reason about and to test.
 
-// the overlap in seconds between two [start, end] intervals
+// The overlap in seconds between two [start, end] intervals.
 function overlap(aStart, aEnd, bStart, bEnd) {
   return Math.max(0, Math.min(aEnd, bEnd) - Math.max(aStart, bStart));
 }
 
-// each segment is assigned the diarization turn it overlaps most, with a confidence
-// (overlap / segment duration). segments are mutated in place and returned.
+// Each segment is assigned the diarization turn it overlaps most,
+// with a confidence (overlap / segment duration).
+// Segments are mutated in place and returned.
 function assignClusters(segments, turns) {
   for (const segment of segments) {
     let best = null;
@@ -21,7 +22,7 @@ function assignClusters(segments, turns) {
       }
     }
 
-    // no turn intersects (timebase or vad mismatch): the nearest turn by start is used
+    // When no turn intersects (timebase or vad mismatch), the nearest turn by start is used.
     if (!best && turns.length) {
       best = turns.reduce((closest, turn) =>
         Math.abs(turn.start - segment.start) < Math.abs(closest.start - segment.start) ? turn : closest
@@ -36,9 +37,9 @@ function assignClusters(segments, turns) {
   return segments;
 }
 
-// the two clusters with the most speaking time are kept as the parties. the one that
-// speaks first is the agent (support calls open with the agent greeting), configurable.
-// a map of cluster label -> 'agent' | 'customer' is returned.
+// The two clusters with the most speaking time are kept as the parties.
+// The one that speaks first is the agent (support calls open with the agent greeting), configurable.
+// A map of cluster label -> 'agent' | 'customer' is returned.
 function clustersToRoles(segments, agentSpeaksFirst = true) {
   const totals = new Map();
   const earliest = new Map();
@@ -70,7 +71,7 @@ function clustersToRoles(segments, agentSpeaksFirst = true) {
   roles.set(agent, 'agent');
   roles.set(customer, 'customer');
 
-  // any minor third or later cluster is collapsed to customer
+  // Any minor third or later cluster is collapsed to customer.
   for (const cluster of ranked.slice(2)) {
     roles.set(cluster, 'customer');
   }

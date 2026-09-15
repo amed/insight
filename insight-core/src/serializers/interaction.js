@@ -27,7 +27,7 @@ function serializeInteraction(interaction) {
   };
 }
 
-// a lightweight summary is shaped for the list view
+// A lightweight summary is shaped for the list view.
 function serializeInteractionSummary(interaction) {
   return {
     id: interaction.id,
@@ -40,7 +40,7 @@ function serializeInteractionSummary(interaction) {
   };
 }
 
-// a recorded step is shaped for the api
+// A recorded step is shaped for the api.
 function serializeStep(step) {
   return {
     id: step.id,

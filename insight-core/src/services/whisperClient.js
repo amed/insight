@@ -1,6 +1,6 @@
 const config = require('../config');
 
-// the audio file is sent to whisper; per-channel split is requested only when asked
+// The audio file is sent to whisper. Per-channel split is requested only when asked.
 async function transcribe(file, { split = false } = {}) {
   const form = new FormData();
   form.append('file', new Blob([file.buffer]), file.originalname || 'audio');

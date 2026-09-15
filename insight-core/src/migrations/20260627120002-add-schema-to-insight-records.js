@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // nullable on purpose: pre-schema records stay null and are excluded from summaries
+    // Pre-schema records stay null and are excluded from summaries (nullable on purpose).
     await queryInterface.addColumn('insight_records', 'schema_name', {
       type: Sequelize.TEXT,
       allowNull: true,

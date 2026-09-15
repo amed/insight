@@ -2,7 +2,7 @@ const schemas = require('../services/schemas');
 const summaryService = require('../services/summaryService');
 const HttpError = require('../utils/httpError');
 
-// Loaded schemas are listed so the upload ui can offer the choice
+// Loaded schemas are listed so the upload ui can offer the choice.
 function list(_req, res) {
   res.json(
     schemas.list().map(({ id, name, version, hash, fields }) => ({
@@ -16,8 +16,8 @@ function list(_req, res) {
   );
 }
 
-// value counts for one schema, optionally filtered to one pipeline.
-// the schema name carries the version
+// Value counts for one schema, optionally filtered to one pipeline.
+// Only records under the schema's current name, version, and content hash are counted.
 async function summary(req, res) {
   const schema = schemas.get(req.params.name);
   if (!schema) throw new HttpError(404, 'schema not found');

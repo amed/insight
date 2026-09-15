@@ -1,7 +1,7 @@
 const HttpError = require('../utils/httpError');
 
 // Parse and validate uploaded JSON transcript file.
-// Expected shape: { "interaction_id": string, "turns": [{ "speaker": string, "text": string }] }
+// The expected shape is { "interaction_id": string, "turns": [{ "speaker": string, "text": string }] }
 // TODO: find better strategy for validation
 function parseTranscript(file) {
   if (!file) {

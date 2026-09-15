@@ -4,10 +4,10 @@ const crypto = require('crypto');
 
 const DIR = path.join(__dirname, '../../schemas');
 
-// base schema
+// Base schema.
 const DEFAULT_ID = 'v1';
 
-// 'unknown' is reserved as the implicit abstention value on every field
+// 'unknown' is reserved as the implicit abstention value on every field.
 const RESERVED = 'unknown';
 
 // Valid schema IDs start with a letter and use lowercase URL-safe characters.

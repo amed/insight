@@ -1,9 +1,10 @@
 const { sequelize, Interaction, Line, InsightRecord, RecordField, FieldCitation, Step } = require('../models');
 const { buildLines } = require('./lineBuilder');
 
-// an empty interaction and its pending record are created in one transaction and the id is
-// returned, so the upload can respond immediately. the lines and fields are filled in later
-// on the background path (see processingService), once transcription and extraction finish.
+// An empty interaction and its pending record are created in one transaction and the id is returned,
+// so the upload can respond immediately.
+// The lines and fields are filled in later on the background path (see processingService),
+// once transcription and extraction finish.
 async function createPending({ interactionId, sourceFilename, pipeline = 'p2', schema }) {
   return sequelize.transaction(async (transaction) => {
     const interaction = await Interaction.create(
@@ -15,7 +16,7 @@ async function createPending({ interactionId, sourceFilename, pipeline = 'p2', s
         interactionId: interaction.id,
         status: 'pending',
         pipeline,
-        // the schema stamp makes the record self-describing and partitionable
+        // The schema stamp makes the record self-describing and partitionable.
         schemaName: schema.name,
         schemaVersion: schema.version,
         schemaHash: schema.hash,
@@ -26,13 +27,13 @@ async function createPending({ interactionId, sourceFilename, pipeline = 'p2', s
   });
 }
 
-// the turns are stored as the interaction's lines, with stable ids and order
+// The turns are stored as the interaction's lines, with stable ids and order.
 async function saveLines(interactionId, turns) {
   const lines = buildLines(turns).map((line) => ({ ...line, interactionId }));
   await Line.bulkCreate(lines);
 }
 
-// the interactions are listed newest first, each with its record status
+// The interactions are listed newest first, each with its record status.
 async function listInteractions() {
   return Interaction.findAll({
     include: [
@@ -46,7 +47,7 @@ async function listInteractions() {
   });
 }
 
-// the interaction is loaded with its ordered lines and its record (fields + citations)
+// The interaction is loaded with its ordered lines and its record (fields + citations).
 async function getInteraction(id) {
   return Interaction.findByPk(id, {
     include: [
@@ -73,7 +74,7 @@ async function getInteraction(id) {
   });
 }
 
-// the recorded steps for an interaction are loaded oldest first
+// The recorded steps for an interaction are loaded oldest first.
 async function getSteps(interactionId) {
   return Step.findAll({ where: { interactionId }, order: [['id', 'ASC']] });
 }

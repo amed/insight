@@ -9,25 +9,27 @@ const trace = require('./trace');
 const extractJson = require('../utils/extractJson');
 const config = require('../config');
 
-// bumped when the extraction prompt text changes, part of the stored config version.
-// prompt2: the value is constrained to the schema's closed values plus unknown.
+// Bumped when the extraction prompt text changes, part of the stored config version.
+// The value is constrained to the schema's closed values plus unknown (prompt2).
 const PROMPT_VERSION = 'prompt2';
 
-// a short error message is taken from an error or value
+// A short error message is taken from an error or value.
 function message(err) {
   return String(err && err.message ? err.message : err);
 }
 
-// the effective llm configuration for a record, stored so results stay comparable:
-// p2 sees the retrieved top-k lines, p3 sees the full conversation
+// The effective llm configuration for a record is stored so results stay comparable.
+// p2 sees the retrieved top-k lines, p3 sees the full conversation.
 function llmConfigVersion(pipeline) {
   const scope = pipeline === 'p3' ? 'full' : `top${config.topK}`;
   return `${config.llmModel}|${scope}|${PROMPT_VERSION}`;
 }
 
-// the whole pipeline for one interaction runs here, off the request path, so the upload
-// responds at once. turns are obtained (transcribed and diarized for audio), stored as
-// lines, then the record's pipeline extracts the schema's fields. every stage is traced.
+// The whole pipeline for one interaction runs here, off the request path,
+// so the upload responds at once.
+// Turns are obtained (transcribed and diarized for audio), stored as lines,
+// then the record's pipeline extracts the schema's fields.
+// Every stage is traced.
 async function run(interactionId, prepared, file, options) {
   try {
     const turns = await obtainTurns(interactionId, prepared, file, options);
@@ -45,7 +47,7 @@ async function run(interactionId, prepared, file, options) {
 
     const record = await InsightRecord.findOne({ where: { interactionId } });
 
-    // the schema was stamped at upload; extraction refuses to run without it
+    // The schema was stamped at upload. Extraction refuses to run without it.
     const schema = schemas.get(record.schemaName);
     if (!schema) {
       await trace.record(interactionId, 'processing:failed', 'error', {
@@ -84,7 +86,7 @@ async function markFailed(interactionId) {
   await InsightRecord.update({ status: 'failed' }, { where: { interactionId } }).catch(() => {});
 }
 
-// turns are parsed already for a transcript; for audio they are transcribed and diarized now
+// Turns are parsed already for a transcript. For audio they are transcribed and diarized now.
 async function obtainTurns(interactionId, prepared, file, options) {
   if (prepared.kind === 'transcript') {
     await trace.record(interactionId, 'ingest', 'ok', { kind: 'transcript', turns: prepared.turns.length });
@@ -95,8 +97,8 @@ async function obtainTurns(interactionId, prepared, file, options) {
   return turns;
 }
 
-// p1: all fields come from one call to the tf-idf baseline service. a failure marks
-// the record failed, there is nothing partial to salvage from a single call.
+// All fields come from one call to the tf-idf baseline service (p1).
+// A failure marks the record failed, there is nothing partial to salvage from a single call.
 async function extractBaseline(interactionId, record, lines) {
   let data;
   try {
@@ -106,8 +108,8 @@ async function extractBaseline(interactionId, record, lines) {
     throw err;
   }
 
-  // the artifact claims the schema it was trained for; a mismatch would store values
-  // that do not belong to the record's schema, so the record fails instead
+  // The artifact claims the schema it was trained for.
+  // A mismatch would store values that do not belong to the record's schema, so the record fails instead.
   const recordSchema = record.schemaName;
   if (data.schema !== recordSchema || data.schema_hash !== record.schemaHash) {
     await trace.record(interactionId, 'extract:baseline', 'error', {
@@ -120,7 +122,7 @@ async function extractBaseline(interactionId, record, lines) {
     throw new Error(`baseline is trained for ${data.schema}, record is ${recordSchema}`);
   }
 
-  // the trained model version (a hash of the training data) is the p1 config version
+  // The trained model version (a hash of the training data) is the p1 config version.
   await record.update({ configVersion: data.model_version });
   await RecordField.bulkCreate(
     data.fields.map((f) => ({ recordId: record.id, name: f.name, value: f.value }))
@@ -132,9 +134,10 @@ async function extractBaseline(interactionId, record, lines) {
   });
 }
 
-// p2 and p3: one field is selected, extracted, grounded, and stored. p2 retrieves the
-// top-k lines first; p3 passes the full conversation, so retrieval is the only variable
-// that differs between the two. a stage failure is traced without stopping other fields.
+// One field is selected, extracted, grounded, and stored (p2 and p3).
+// p2 retrieves the top-k lines first. p3 passes the full conversation,
+// so retrieval is the only variable that differs between the two.
+// A stage failure is traced without stopping other fields.
 async function extractField(interactionId, record, field, lines, pipeline) {
   let topLines;
   if (pipeline === 'p3') {
@@ -155,8 +158,8 @@ async function extractField(interactionId, record, field, lines, pipeline) {
       scores: matches.map((m) => Number(m.score.toFixed(3))),
     });
 
-    // the prompt shows the retrieved lines in conversation order, not score order,
-    // so p2 and p3 prompts differ only in which lines are included
+    // The prompt shows the retrieved lines in conversation order, not score order,
+    // so p2 and p3 prompts differ only in which lines are included.
     topLines = [...ranked].sort((a, b) => a.ordinal - b.ordinal);
   }
 
@@ -176,15 +179,15 @@ async function extractField(interactionId, record, field, lines, pipeline) {
     return;
   }
 
-  // the answer is normalized and checked against the closed set. an out-of-set answer
-  // is stored as unknown and loses its citations, they supported a rejected answer.
+  // The answer is normalized and checked against the closed set.
+  // An out-of-set answer is stored as unknown and loses its citations, they supported a rejected answer.
   const raw = String(extracted.value).trim().toLowerCase();
   const coerced = raw !== 'unknown' && !field.values.includes(raw);
   const value = coerced ? 'unknown' : raw;
 
-  // grounding check: keep only citations that were in the lines given to the model.
-  // the model may ignore the schema and return a non-array, treated as no citations;
-  // repeated ids are deduplicated, the citations table is unique per (field, line).
+  // Only citations that were in the lines given to the model are kept (grounding check).
+  // The model may ignore the schema and return a non-array, treated as no citations.
+  // Repeated ids are deduplicated, the citations table is unique per (field, line).
   const cited = coerced || !Array.isArray(extracted.citations) ? [] : [...new Set(extracted.citations)];
   const allowed = new Map(topLines.map((l) => [l.lineId, l]));
   const citedLines = cited.map((id) => allowed.get(id)).filter(Boolean);
@@ -201,8 +204,8 @@ async function extractField(interactionId, record, field, lines, pipeline) {
     );
   });
 
-  // lines_given and prompt_chars make silent context truncation visible for p3;
-  // raw_value keeps coerced answers debuggable and abstention distinguishable
+  // lines_given and prompt_chars make silent context truncation visible for p3.
+  // raw_value keeps coerced answers debuggable and abstention distinguishable.
   await trace.record(interactionId, `extract:${field.name}`, 'ok', {
     value,
     coerced,

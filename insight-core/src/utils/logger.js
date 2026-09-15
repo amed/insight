@@ -1,7 +1,9 @@
 const config = require('../config');
 
-// a minimal leveled logger. the threshold is set by LOG_LEVEL (default info); anything
-// noisier than the threshold is dropped. an optional meta object is printed alongside.
+// A minimal leveled logger.
+// The threshold is read from config.logLevel, which the config does not define, so it stays at info.
+// Anything noisier than the threshold is dropped.
+// An optional meta object is printed alongside.
 const LEVELS = { error: 0, warn: 1, info: 2, debug: 3 };
 const threshold = LEVELS[config.logLevel] ?? LEVELS.info;
 
