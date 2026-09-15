@@ -41,23 +41,23 @@ import json
 import sys
 from pathlib import Path
 
-# The shared helper package lives one directory up
+# The shared helper package lives one directory up.
 sys.path.append(str(Path(__file__).parent.parent))
 from helper import files
 
-# The store the one cycle fills, read-only here
+# The store the one cycle fills, read-only here.
 PREDICTIONS = Path(__file__).parent.parent.joinpath("out", "predictions", "v1")
 OUT = Path(__file__).parent.joinpath("out")
 
 PIPELINES = ("p2", "p3")
 VARIANTS = ("text", "oracle")
 
-# Values that assert nothing; a field carrying one makes no claim to support
+# Values that assert nothing. A field carrying one makes no claim to support.
 NO_CLAIM = ("unknown", "none", "")
 
 
-# The file name is <batch>__<record>__<variant>__<pipeline>, record ids never
-# contain a double underscore, the other segments never contain any
+# The file name is <batch>__<record>__<variant>__<pipeline>.
+# Record ids never contain a double underscore, the other segments never contain any.
 def parse_name(path):
   batch, rest = path.stem.split("__", 1)
   record_id, variant, pipeline = rest.rsplit("__", 2)
@@ -65,9 +65,9 @@ def parse_name(path):
   return batch, record_id, variant, pipeline
 
 
-# Per record x field evidence. Only complete predictions count, the rest are
-# tallied as not_complete. A p2/p3 file without the evidence keys is a broken
-# store and stops the run
+# Per record x field evidence.
+# Only complete predictions count, the rest are tallied as not_complete.
+# A p2/p3 file without the evidence keys is a broken store and stops the run.
 def evidence(paths):
   rows = []
   tallies = {}
@@ -118,7 +118,7 @@ def blank_tally():
           "invalid_cited": 0, "coerced": 0, "not_complete": 0}
 
 
-# Rates per tally plus the pre-committed criteria
+# Rates per tally plus the pre-committed criteria.
 def scores(tallies):
   summary = {}
   for (pipeline, scope), tally in sorted(tallies.items()):

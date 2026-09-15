@@ -21,7 +21,7 @@ import uuid
 
 
 # Multipart body built by hand, stdlib has no builder (RFC 7578).
-# content_type is the file part's type: application/json for records, audio/wav for wavs
+# content_type is the file part's type, application/json for records and audio/wav for wavs.
 def multipart(fields, file_name, file_bytes, content_type="application/json"):
   boundary = f"----rq{uuid.uuid4().hex}"
   parts = b""
@@ -41,9 +41,9 @@ def request(method, url, body=None, headers=None):
     return json.loads(res.read())
 
 
-# One record through one pipeline via the core api:
-# upload, then poll until the record leaves pending or the deadline passes.
-# The interaction id is suffixed so reruns never collide with the unique constraint
+# One record through one pipeline via the core api.
+# Upload, then poll until the record leaves pending or the deadline passes.
+# The interaction id is suffixed so reruns never collide with the unique constraint.
 def predict(core, record, pipeline, timeout=900):
   payload = dict(record)
   payload["interaction_id"] = f"{record['interaction_id']}--{pipeline}--{uuid.uuid4().hex[:8]}"

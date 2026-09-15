@@ -36,30 +36,30 @@ import json
 import sys
 from pathlib import Path
 
-# The shared helper package lives one directory up
+# The shared helper package lives one directory up.
 sys.path.append(str(Path(__file__).parent.parent))
 from helper import datasets, files
 
-# The store the one cycle fills, read-only here
+# The store the one cycle fills, read-only here.
 PREDICTIONS = Path(__file__).parent.parent.joinpath("out", "predictions", "v2")
 OUT = Path(__file__).parent.joinpath("out")
 
 BATCH = "hvb-audio"
 PIPELINES = ("p2", "p3")
 
-# Values that assert nothing; an unknown with citations is still no claim
+# Values that assert nothing. An unknown with citations is still no claim.
 NO_CLAIM = ("unknown", "none", "")
 
 
-# The banking_task gold is the call's task label in snake case, matching the
-# values declared in insight-core/schemas/v2.json
+# The banking_task gold is the call's task label in snake case,
+# matching the values declared in insight-core/schemas/v2.json.
 def banking_gold(gold_entry):
   return gold_entry["intent_source"].replace(" ", "_")
 
 
 # One row per record x pipeline x scored field, plus the p1 refusal rows.
-# Validity is tallied over every v2 field of each complete prediction, not
-# only the two scored ones, a coercion on any field is a validity failure
+# Validity is tallied over every v2 field of each complete prediction, not only the two scored ones,
+# a coercion on any field is a validity failure.
 def collect_rows(gold):
   rows = []
   validity = {}
@@ -69,7 +69,7 @@ def collect_rows(gold):
     prediction = json.loads(path.read_text())
 
     if pipeline == "p1":
-      # The designed refusal: the artifact claims v1, core fails the v2 record
+      # The artifact claims v1, core fails the v2 record (the designed refusal).
       rows.append([record_id, "p1", prediction["status"], "", "", "", "", "", ""])
       continue
 
@@ -92,7 +92,7 @@ def collect_rows(gold):
   return rows, validity
 
 
-# Aggregates per pipeline plus the pre-committed criteria
+# Aggregates per pipeline plus the pre-committed criteria.
 def scores(rows, validity):
   summary = {}
 

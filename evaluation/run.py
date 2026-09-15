@@ -50,13 +50,13 @@ import urllib.error
 import uuid
 from pathlib import Path
 
-# The shared helper package lives in this directory
+# The shared helper package lives in this directory.
 sys.path.append(str(Path(__file__).parent))
 from helper import api, datasets, files, services
 
 
 # Reads are retried with backoff, one transient network error must not abort an hours-long run.
-# Uploads are never retried this way, a lost POST response could create a duplicate interaction
+# Uploads are never retried this way, a lost POST response could create a duplicate interaction.
 def request_retry(method, url):
   for attempt in range(1, 6):
     try:
@@ -80,7 +80,7 @@ RQ_SCORERS = ("rq1", "rq2", "rq3", "rq4")
 RQ1_OLD = Path(__file__).parent.joinpath("rq1", "out", "predictions")
 RQ2_OLD = Path(__file__).parent.joinpath("rq2", "out", "predictions")
 
-# The whole matrix, every cell runs exactly once
+# The whole matrix, every cell runs exactly once.
 PLAN = (
   ("abcd-text", ("text",), ("p1", "p2", "p3"), "v1"),
   ("maia-text", ("text",), ("p1", "p2", "p3"), "v1"),
@@ -88,7 +88,7 @@ PLAN = (
   ("hvb-audio", ("oracle",), ("p1", "p2", "p3"), "v2"),
 )
 
-# What a fresh cell needs up, by variant
+# What a fresh cell needs up, by variant.
 TEXT_SERVICES = ("core", "baseline", "embeddings", "ollama")
 AUDIO_SERVICES = ("core", "baseline", "embeddings", "ollama", "whisper", "diarization")
 
@@ -97,8 +97,8 @@ def cell_path(schema, batch, record_id, variant, pipeline):
   return OUT.joinpath(schema, f"{batch}__{record_id}__{variant}__{pipeline}.json")
 
 
-# Records with a gold entry, per batch. This drops the hvb asr variant record
-# files, the asr variant is loaded separately when its cell runs
+# Records with a gold entry, per batch.
+# This drops the hvb asr variant record files, the asr variant is loaded separately when its cell runs.
 def prepare():
   all_records = {}
   for batch in {row[0] for row in PLAN}:
@@ -108,10 +108,10 @@ def prepare():
   return all_records
 
 
-# Stage 1: copy old predictions into the store where they are sufficient.
+# Copy old predictions into the store where they are sufficient (stage 1).
 # Only complete files count, a seeded timeout would freeze that cell forever.
-# p1 never cites; p2/p3 files count only when they already carry the evidence
-# keys, a fields-only file would cripple rq2
+# p1 never cites. p2/p3 files count only when they already carry the evidence keys,
+# a fields-only file would cripple rq2.
 def seed(all_records):
   seeded = 0
   for batch, variants, pipelines, schema in PLAN:
@@ -141,7 +141,7 @@ def seed(all_records):
     print(f"seeded {seeded} cells from the old rq1/rq2 predictions")
 
 
-# Every cell of the plan that is not in the store yet
+# Every cell of the plan that is not in the store yet.
 def missing_cells(all_records, limit):
   missing = []
   for batch, variants, pipelines, schema in PLAN:
@@ -154,8 +154,8 @@ def missing_cells(all_records, limit):
   return missing
 
 
-# Stage 2: the services the missing cells need must answer,
-# and core must serve every schema the missing cells use
+# The services the missing cells need must answer,
+# and core must serve every schema the missing cells use (stage 2).
 def gate(core, missing):
   needs_audio = any(variant in ("mono", "stereo") for _, _, variant, _, _ in missing)
   services.check_services(AUDIO_SERVICES if needs_audio else TEXT_SERVICES)
@@ -167,9 +167,9 @@ def gate(core, missing):
                f"add insight-core/schemas/{schema}.json and restart core")
 
 
-# The upload for one cell:
-# text variants send the record json with a suffixed interaction id, audio variants send the wav.
-# The stereo wav has the agent on channel 0, mono needs diarisation and gets no channel fields
+# The upload for one cell.
+# Text variants send the record json with a suffixed interaction id, audio variants send the wav.
+# The stereo wav has the agent on channel 0, mono needs diarisation and gets no channel fields.
 def build_upload(batch, record, variant, pipeline, schema):
   form = {"pipeline": pipeline, "schema": schema}
 
@@ -190,8 +190,7 @@ def build_upload(batch, record, variant, pipeline, schema):
   return form, wav.name, wav.read_bytes(), "audio/wav"
 
 
-# The evidence core kept per field: the surviving citations from the record,
-# the coercion flag and the dropped citations from the extract:<field> steps
+# The evidence core kept per field is the surviving citations from the record, the coercion flag and the dropped citations from the extract:<field> steps.
 def evidence_of(core, api_id, record_data):
   steps = request_retry("GET", f"{core}/interactions/{api_id}/steps")
   coerced = {}
@@ -209,9 +208,9 @@ def evidence_of(core, api_id, record_data):
   }
 
 
-# One cell against the live system: upload, poll until the record leaves
-# pending or the deadline passes, then store everything core produced.
-# A failed upload is stored as its own status, never retried blindly
+# One cell against the live system.
+# Upload, poll until the record leaves pending or the deadline passes, then store everything core produced.
+# A failed upload is stored as its own status, never retried blindly.
 def predict(core, form, file_name, file_bytes, content_type, timeout):
   body, headers = api.multipart(form, file_name, file_bytes, content_type)
   try:
@@ -243,7 +242,7 @@ def predict(core, form, file_name, file_bytes, content_type, timeout):
           "citations": {}, "dropped_citations": {}, "coerced": {}, "config_version": None}
 
 
-# Stage 3: every missing cell runs once
+# Every missing cell runs once (stage 3).
 def collect(core, missing, timeout):
   for index, (batch, record, variant, pipeline, schema) in enumerate(missing, 1):
     target = cell_path(schema, batch, record["interaction_id"], variant, pipeline)
@@ -253,8 +252,8 @@ def collect(core, missing, timeout):
     files.write_json(target, predict(core, form, file_name, file_bytes, content_type, timeout))
 
 
-# Stage 4: the four rq scorers, each reads the store and writes its own
-# outputs. One failing scorer never blocks the others, they are independent
+# The four rq scorers run, each reads the store and writes its own outputs (stage 4).
+# One failing scorer never blocks the others, they are independent.
 def score():
   failed = []
   for rq in RQ_SCORERS:
@@ -275,8 +274,8 @@ def main():
   parser.add_argument("--skip-scoring", action="store_true", help="collect only")
   args = parser.parse_args()
 
-  # The --core flag overrides the endpoints table, so the gate probes the
-  # same core the uploads will use
+  # The --core flag overrides the endpoints table,
+  # so the gate probes the same core the uploads will use.
   services.ENDPOINTS["core"] = args.core
 
   all_records = prepare()

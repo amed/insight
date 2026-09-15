@@ -19,9 +19,10 @@ def accuracy(pairs):
   return sum(1 for gold, predicted in pairs if gold == predicted) / len(pairs)
 
 
-# Per-class f1 averaged over the classes that appear in gold. The averaged set
-# depends on gold only, never on a pipeline's own predictions, so the score is
-# comparable across pipelines. Abstention (unknown) is never a class
+# Per-class f1 averaged over the classes that appear in gold.
+# The averaged set depends on gold only, never on a pipeline's own predictions,
+# so the score is comparable across pipelines.
+# Abstention (unknown) is never a class.
 def macro_f1(pairs, classes):
   if not pairs:
     return None
@@ -41,8 +42,8 @@ def macro_f1(pairs, classes):
   return sum(scores) / len(scores) if scores else None
 
 
-# Percentile bootstrap interval of a statistic over (gold, predicted) pairs:
-# the records are resampled with replacement, the statistic is recomputed on each resample,
+# Percentile bootstrap interval of a statistic over (gold, predicted) pairs.
+# The records are resampled with replacement, the statistic is recomputed on each resample,
 # and the 2.5th and 97.5th percentiles are returned.
 # The seed is fixed so the interval is reproducible from the same store
 def bootstrap_ci(pairs, statistic, resamples=3000, seed=0):

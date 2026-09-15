@@ -22,8 +22,8 @@ ENDPOINTS = {
 }
 
 
-# A service that answers anything, even a 404, is up; a refused connection is
-# down and the run stops here with every down service named
+# A service that answers anything, even a 404, is up.
+# A refused connection is down and the run stops here with every down service named
 def check_services(names):
   down = []
   for name in names:
@@ -34,7 +34,7 @@ def check_services(names):
     except OSError:
       down.append(f"{name} ({ENDPOINTS[name]})")
   if down:
-    # sys.exit prints to stderr and exits 1; the escape codes make it red
+    # sys.exit prints to stderr and exits 1. The escape codes make it red.
     lines = "\n".join(f"\t- {entry}" for entry in down)
     sys.exit(f"\033[31mError! Services not reachable:\n\n{lines}\n\033[0m")
   print("services up: " + ", ".join(names))

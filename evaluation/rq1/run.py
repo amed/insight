@@ -36,15 +36,15 @@ import json
 import sys
 from pathlib import Path
 
-# The shared helper package lives one directory up
+# The shared helper package lives one directory up.
 sys.path.append(str(Path(__file__).parent.parent))
 from helper import datasets, files, metrics
 
-# The store the one cycle fills, read-only here
+# The store the one cycle fills, read-only here.
 PREDICTIONS = Path(__file__).parent.parent.joinpath("out", "predictions", "v1")
 OUT = Path(__file__).parent.joinpath("out")
 
-# Which fields have gold in which batch, and which variant is rq1's input
+# Which fields have gold in which batch, and which variant is rq1's input.
 BATCHES = {
   "abcd-text": ("text", ["intent", "issue_type", "agent_action"]),
   "maia-text": ("text", ["sentiment", "resolution_status"]),
@@ -54,8 +54,8 @@ BATCHES = {
 PIPELINES = ("p1", "p2", "p3")
 
 
-# The file name is <batch>__<record>__<variant>__<pipeline>, record ids never
-# contain a double underscore, the other segments never contain any
+# The file name is <batch>__<record>__<variant>__<pipeline>.
+# Record ids never contain a double underscore, the other segments never contain any.
 def parse_name(path):
   batch, rest = path.stem.split("__", 1)
   record_id, variant, pipeline = rest.rsplit("__", 2)
@@ -63,8 +63,9 @@ def parse_name(path):
   return batch, record_id, variant, pipeline
 
 
-# Predictions vs gold. Every prediction becomes one csv row per gold field,
-# complete rows are also collected into (gold, predicted) pairs for the scores
+# Predictions vs gold.
+# Every prediction becomes one csv row per gold field,
+# complete rows are also collected into (gold, predicted) pairs for the scores.
 def scores(all_gold):
   rows = []
   pairs = {}
@@ -87,7 +88,7 @@ def scores(all_gold):
       rows.append([batch, record_id, pipeline, prediction["status"], field,
                    gold if gold is not None else "", predicted, correct])
 
-  # The union of both key sets, so a slice whose cells all failed still appears
+  # The union of both key sets, so a slice whose cells all failed still appears.
   values = datasets.schema_values()
   summary = {}
   for key in sorted(set(pairs) | set(not_complete)):

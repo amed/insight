@@ -1,28 +1,15 @@
-# Research Question 1
+# Research Question 1 - Extraction accuracy
 
-How accurately are predefined BI fields extracted by the three pipelines when evaluated.
+How accurately are predefined BI fields extracted by the three pipelines when evaluated.  
 
-The module is dedicated to answer the first reasearch question, which is which one of the three extraction methods is best.
+Compares P1, P2 and P3 against available gold labels using per-field accuracy, macro-F1 and bootstrap intervals.
 
-The build extracts fields in 3 ways: simple classifier, retrieval-grounded LLM, and LLM (P1, P2, and P3).
+Uses schema v1 and text/oracle inputs.
 
+After [collecting predictions](../README.md), run from the repository root:
 
-## Stages of evaluation
+```bash
+python3 evaluation/rq1/run.py
+```
 
-Evaluation schema is pinned to `insight-core/schemas/v1.json` through all phases.
-
-### Prepare The Data (Stage 1)
-
-Load the dataset directory and pair each record with its gold labels.
-
-### Runner (Stage 2)
-
-The one cycle (`evaluation/run.py`) runs every record through each of the three pipelines via the core API, exactly once for all four research questions. This module only reads its prediction store.
-
-### Store Scores (Stage 3)
-
-Compare predictions against gold labels and store per-field metrics for each pipeline.
-
-### Report (Stage 4)
-
-Aggregate the stored scores into a summary report comparing P1, P2, and P3.
+Writes `results.csv` and `scores.json` to `evaluation/rq1/out/`. Makes no model requests.

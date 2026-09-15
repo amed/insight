@@ -1,46 +1,37 @@
-# Evaluation: The Reports of Research Questions
+# Evaluation - The Reports of Research Questions
 
-The step-by-step guide through the evaluation suite. All commands in this document runs from the repository root, not this directoy.
+Runs all three pipelines on prepared conversations and scores four research questions.
 
+Requires the [data](../dataprep/README.md) and [running stack](../README.md#run-the-project). Run commands from the repository root.
 
-## What this produces
-
-Three pipelines (p1 tf-idf baseline, p2 retrieval-grounded llm, p3 direct llm) are run
-over the same conversations in every input variant (verified transcript, provided
-machine transcript, mono audio, stereo audio). The suite scores the results against gold
-labels and renders one report per batch plus a cross-batch verdict comparing the
-pipelines. Every number is traceable to a stored raw artifact.
-
-
-## Prerequisites
-
-- python 3.10+
-- ffmpeg
-- git and curl
-- disk: about 4 gb free
-- for the run stages: the docker stack up (`docs/getting-started.md`) and the migrations
-  applied
-
-
-### Build and Validate the Datasets
-
-
-All datasets come from the dataprep module, which downloads the corpora, builds
-the training files and the three test batches, and stamps everything for schema
-v1 (see `dataprep/README.md` and `dataprep/datasets.md`):
+## Run
 
 ```bash
-python3 dataprep/prepare.py    # download, build training files, build batches
-python3 dataprep/validate.py   # 30+ checks incl. v1 stamps and split discipline
+# Small test: first five records per batch, across variants and pipelines
+python3 evaluation/run.py --limit 5 --skip-scoring
+
+# Full collection and scoring
+python3 evaluation/run.py
 ```
 
-Batches:
-- `abcd-text` (~180 records; gold intent, issue_type, agent_action)
-- `maia-text` (~100 records; gold sentiment, resolution_status)
-- `hvb-audio` (~50 calls as oracle/asr text records plus mono/stereo wavs. Gold intent, speakers)
+Predictions go to `evaluation/out/predictions/`. Existing files are skipped, including failures and timeouts; move a saved file out of the store to recollect that cell.
 
-The taxonomy decisions live in `dataprep/corpora/abcd_mapping.json` and `hvb_mapping.json`
+## Score existing predictions
 
-## Running and Generating the Report
+```bash
+python3 evaluation/rq1/run.py
+python3 evaluation/rq2/run.py
+python3 evaluation/rq3/run.py
+python3 evaluation/rq4/run.py
+```
 
-TODO: add 
+Each scorer writes `results.csv` and `scores.json` to its own `rqN/out/` directory.
+
+| Question | Measures |
+|---|---|
+| [RQ1](rq1/README.md) | Field accuracy and macro-F1. |
+| [RQ2](rq2/README.md) | Citation support and schema validity. |
+| [RQ3](rq3/README.md) | Transcription errors and downstream prediction changes. |
+| [RQ4](rq4/README.md) | Adding a field through schema configuration. |
+
+The full plan has 1,611 cells: 186 ABCD conversations, 101 MAIA conversations and 50 HarperValleyBank calls across input variants, pipelines and schemas. Pilot scores are partial. Citation support checks line references, not whether the cited text proves the answer.

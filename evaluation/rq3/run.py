@@ -33,11 +33,11 @@ import json
 import sys
 from pathlib import Path
 
-# The shared helper package lives one directory up
+# The shared helper package lives one directory up.
 sys.path.append(str(Path(__file__).parent.parent))
 from helper import datasets, files, metrics
 
-# The store the one cycle fills, read-only here
+# The store the one cycle fills, read-only here.
 PREDICTIONS = Path(__file__).parent.parent.joinpath("out", "predictions", "v1")
 OUT = Path(__file__).parent.joinpath("out")
 
@@ -50,15 +50,15 @@ def cell(record_id, variant, pipeline):
   return PREDICTIONS.joinpath(f"{BATCH}__{record_id}__{variant}__{pipeline}.json")
 
 
-# The oracle turns per record, the reference for wer and role accuracy
+# The oracle turns per record, the reference for wer and role accuracy.
 def oracle_turns(record_id):
   record = datasets.DATASETS.joinpath(BATCH, "records", f"{record_id}.json")
 
   return json.loads(record.read_text())["turns"]
 
 
-# One row per record x variant x pipeline: the intent answer plus, for the
-# degraded variants, how far the produced text and speakers drifted from oracle
+# One row per record x variant x pipeline.
+# It holds the intent answer plus, for the degraded variants, how far the produced text and speakers drifted from oracle.
 def collect_rows(gold):
   rows = []
   for record_id in sorted(gold):
@@ -95,9 +95,9 @@ def collect_rows(gold):
   return rows
 
 
-# Aggregates per variant x pipeline, with the paired flips against oracle
+# Aggregates per variant x pipeline, with the paired flips against oracle.
 def scores(rows):
-  # correct-by-cell index for the flip pairing
+  # Correct-by-cell index for the flip pairing.
   correct_of = {}
   for record_id, variant, pipeline, status, gold, predicted, correct, wer, role in rows:
     if correct != "":

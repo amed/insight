@@ -26,15 +26,15 @@ SCHEMA_FILE = Path(__file__).parent.parent.parent.joinpath("insight-core", "sche
 DATASETS = Path(__file__).parent.parent.parent.joinpath("dataprep", "out", "testing")
 
 
-# Field -> list of allowed values, from the pinned v1 schema
+# Field -> list of allowed values, from the pinned v1 schema.
 def schema_values():
   schema = json.loads(SCHEMA_FILE.read_text())
 
   return {field["name"]: field["values"] for field in schema["fields"]}
 
 
-# Records and gold of one dataprep batch. A batch that is missing, not stamped
-# for v1, or built against an older revision of v1.json is refused
+# Records and gold of one dataprep batch.
+# A batch that is missing, not stamped for v1, or built against an older revision of v1.json is refused.
 def load_batch(name):
   batch = DATASETS.joinpath(name)
   if not batch.joinpath("manifest.json").exists():
