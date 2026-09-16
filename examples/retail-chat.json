@@ -1,0 +1,49 @@
+{
+  "interaction_id": "example-retail-chat",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "HI, what can I do for you?"
+    },
+    {
+      "speaker": "customer",
+      "text": "Hi! I had a promo code that is not working.  It says invalid"
+    },
+    {
+      "speaker": "agent",
+      "text": "Okay can I have your name please"
+    },
+    {
+      "speaker": "customer",
+      "text": "David Williams"
+    },
+    {
+      "speaker": "agent",
+      "text": "Do you know when the promo code was issued?"
+    },
+    {
+      "speaker": "customer",
+      "text": "I got it 5 days ago"
+    },
+    {
+      "speaker": "agent",
+      "text": "Here is a new promo code 8I01I"
+    },
+    {
+      "speaker": "agent",
+      "text": "This is for 20% off"
+    },
+    {
+      "speaker": "agent",
+      "text": "Is there anything else I can help you with."
+    },
+    {
+      "speaker": "customer",
+      "text": "No that is all.  Thank you so much"
+    },
+    {
+      "speaker": "agent",
+      "text": "Have a nice day"
+    }
+  ]
+}

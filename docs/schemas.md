@@ -42,7 +42,7 @@ The base schema must be present.
 
 ```bash
 curl -s localhost:4000/schemas
-curl -s -i -F "file=@insight-core/examples/transcript.json" -F "schema=v1" localhost:4000/interactions
+curl -s -i -F "file=@examples/transcript.json" -F "schema=v1" localhost:4000/interactions
 curl -s "localhost:4000/schemas/v1/summary?pipeline=p2"
 ```
 

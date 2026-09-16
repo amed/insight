@@ -58,7 +58,7 @@ Open [localhost:3000](http://localhost:3000). The first startup downloads the se
 To try a transcript, upload the included example:
 
 ```bash
-curl -i -F "file=@insight-core/examples/transcript.json" -F "pipeline=p2" http://localhost:4000/interactions
+curl -i -F "file=@examples/transcript.json" -F "pipeline=p2" http://localhost:4000/interactions
 ```
 
 The API returns an interaction ID with `pending` status. Replace `1` with the returned ID to read the result and processing trace:
@@ -67,6 +67,8 @@ The API returns an interaction ID with `pending` status. Replace `1` with the re
 curl http://localhost:4000/interactions/1
 curl http://localhost:4000/interactions/1/steps
 ```
+
+More example inputs, including a recorded call in mono, stereo and every accepted audio format, are in `examples/README.md`.
 
 
 
@@ -78,6 +80,7 @@ curl http://localhost:4000/interactions/1/steps
 | `insight-web/` | React interface for uploading and reviewing interactions. |
 | `baseline/` | P1 classifier training and service. |
 | `dataprep/` | Dataset downloads, preparation and validation. |
+| `examples/` | Example uploads in every accepted format, with their licences. |
 | `evaluation/` | Prediction runner and scorers for research questions RQ1-RQ4. |
 | `whisper/`, `diarization/`, `embeddings/`, `ollama/` | Audio transcription, speaker diarisation, retrieval and LLM services. |
 | `docs/` | Setup, testing and schema guides. |

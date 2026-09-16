@@ -1,0 +1,41 @@
+{
+  "interaction_id": "example-bank-call",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "hello this is harper valley national bank my name is mary how can i help you today"
+    },
+    {
+      "speaker": "customer",
+      "text": "hi my name is robert wilson i lost my credit card can you send me a new one"
+    },
+    {
+      "speaker": "agent",
+      "text": "sure uhm which card was it that you would like to replace"
+    },
+    {
+      "speaker": "customer",
+      "text": "it's my credit card"
+    },
+    {
+      "speaker": "agent",
+      "text": "alright"
+    },
+    {
+      "speaker": "agent",
+      "text": "okay i've ordered a new ordered you a replacement credit card is there anything else i can help you with"
+    },
+    {
+      "speaker": "customer",
+      "text": "um no that will be all thank you"
+    },
+    {
+      "speaker": "agent",
+      "text": "okay thank you for calling have a great day bye bye"
+    },
+    {
+      "speaker": "customer",
+      "text": "okay alright"
+    }
+  ]
+}

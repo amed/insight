@@ -192,7 +192,7 @@ The simplest path, no model services needed for ingest.
 Shape is `{ "interaction_id": string, "turns": [{ "speaker", "text" }] }`.
 
 ```bash
-id=$(curl -s -F "file=@insight-core/examples/transcript.json" localhost:4000/interactions | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')
+id=$(curl -s -F "file=@examples/transcript.json" localhost:4000/interactions | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')
 echo "$id"
 ```
 
@@ -223,7 +223,7 @@ curl -s "localhost:4000/schemas/v1/summary?pipeline=p2"
 ```
 
 ```bash
-curl -s -i -F "file=@insight-core/examples/transcript.json" -F "pipeline=p3" localhost:4000/interactions
+curl -s -i -F "file=@examples/transcript.json" -F "pipeline=p3" localhost:4000/interactions
 ```
 
 The research evaluation runner is documented in [evaluation](../evaluation/README.md).
@@ -241,6 +241,7 @@ curl -s "localhost:4000/interactions/$id/steps"
 `/` is expected to return the endpoint list, `/interactions` an array, and an upload `202 {"id":...,"status":"pending"}` immediately.
 All the heavy work runs on the background path, so a read taken right after the upload shows `status: pending` with empty `lines`.
 The `lines` appear once ingest finishes, and the `fields` (each a `name`, `value`, and supporting `citations`) once the record reaches `complete`.
+Lines from audio carry `start` and `end` in seconds, lines from a transcript carry `null` unless the turns included them.
 A failure before extraction, or a failed p1 call, ends the record as `failed`.
 A failed field extraction in p2 or p3 is traced, and the record still completes without that field.
 `/:id/steps` returns the ordered trace, each step with a `name`, `status` (`ok`/`skipped`/`error`), and a `detail` object, which is the fastest way to see where a call stalled.

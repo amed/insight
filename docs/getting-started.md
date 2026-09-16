@@ -52,7 +52,7 @@ This does not affect running the system, which extracts with the LLM pipelines (
 curl -s localhost:4000/
 
 # Upload the example transcript and read the resulting record.
-id=$(curl -s -F "file=@insight-core/examples/transcript.json" localhost:4000/interactions | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')
+id=$(curl -s -F "file=@examples/transcript.json" localhost:4000/interactions | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')
 curl -s "localhost:4000/interactions/$id"
 ```
 

@@ -1,0 +1,11 @@
+agent: HI, what can I do for you?
+customer: Hi! I had a promo code that is not working.  It says invalid
+agent: Okay can I have your name please
+customer: David Williams
+agent: Do you know when the promo code was issued?
+customer: I got it 5 days ago
+agent: Here is a new promo code 8I01I
+agent: This is for 20% off
+agent: Is there anything else I can help you with.
+customer: No that is all.  Thank you so much
+agent: Have a nice day
