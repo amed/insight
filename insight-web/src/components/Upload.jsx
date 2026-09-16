@@ -9,6 +9,13 @@ const modes = [
   { key: 'audio', label: 'Audio' },
 ];
 
+// p2 is the default PIPELINE
+const pipelines = [
+  { key: 'p1', label: 'p1 baseline (tf-idf)' },
+  { key: 'p2', label: 'p2 grounded LLM (retrieval)' },
+  { key: 'p3', label: 'p3 direct LLM (full conversation)' },
+];
+
 export default function Upload() {
   const [mode, setMode] = useState('file');
   const [file, setFile] = useState(null);
@@ -17,6 +24,7 @@ export default function Upload() {
   const [splitChannels, setSplitChannels] = useState(false);
   const [agentChannel, setAgentChannel] = useState(0);
   const [schemaId, setSchemaId] = useState(null);
+  const [pipeline, setPipeline] = useState('p2');
   const { data: schemaList } = useSchemas();
   const mutation = useCreateInteraction();
 
@@ -58,6 +66,7 @@ export default function Upload() {
     const payload = mode === 'text' ? buildTranscriptFile(text) : file;
     if (!payload) return;
     const fields = {
+      pipeline,
       ...(schema ? { schema } : {}),
       ...(mode === 'audio' && channels >= 2 && splitChannels
         ? { split_channels: '1', agent_channel: agentChannel }
@@ -150,6 +159,15 @@ export default function Upload() {
           )}
         </>
       )}
+
+      <label className="hint">
+        pipeline{' '}
+        <select value={pipeline} onChange={(event) => setPipeline(event.target.value)}>
+          {pipelines.map((p) => (
+            <option key={p.key} value={p.key}>{p.label}</option>
+          ))}
+        </select>
+      </label>
 
       {schemaList && schemaList.length > 1 && (
         <label className="hint">

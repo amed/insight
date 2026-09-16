@@ -10,6 +10,8 @@
   --danger: #b91c1c;
   --success: #15803d;
   --radius: 6px;
+  --bubble-agent: var(--surface);
+  --bubble-customer: #e4e4e7;
 }
 
 * {
@@ -182,7 +184,6 @@ body {
   margin: 0 0 4px;
 }
 
-.lines,
 .fields {
   list-style: none;
   margin: 8px 0 16px;
@@ -192,9 +193,42 @@ body {
   gap: 4px;
 }
 
-.lines li,
 .fields li {
   font-size: 14px;
+}
+
+.chat {
+  list-style: none;
+  margin: 8px 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 720px;
+}
+
+.bubble {
+  align-self: flex-start;
+  max-width: 75%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bubble-agent);
+  font-size: 14px;
+}
+
+.bubble.customer {
+  align-self: flex-end;
+  background: var(--bubble-customer);
+}
+
+.bubble-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 2px;
+  font-size: 11px;
+  color: var(--text-muted);
 }
 
 .steps {

@@ -45,6 +45,8 @@ async function ingestAudio(file, { splitChannels = false, agentChannel = 0 } = {
     const turns = usable.map((segment) => ({
       speaker: segment.channel === agentChannel ? 'agent' : 'customer',
       text: segment.text,
+      start: segment.start,
+      end: segment.end,
     }));
     return { turns, ingest: { kind: 'audio', channels, split, segments: usable.length, diarization: 'skipped' } };
   }
@@ -57,6 +59,8 @@ async function ingestAudio(file, { splitChannels = false, agentChannel = 0 } = {
     const turns = usable.map((segment) => ({
       speaker: roles.get(segment.cluster) || 'unknown',
       text: segment.text,
+      start: segment.start,
+      end: segment.end,
     }));
     return {
       turns,
@@ -66,7 +70,7 @@ async function ingestAudio(file, { splitChannels = false, agentChannel = 0 } = {
 
   // When diarization is unavailable or empty, speakers stay unknown so processing still runs (fallback).
   const turns = usable.length
-    ? usable.map((segment) => ({ speaker: 'unknown', text: segment.text }))
+    ? usable.map((segment) => ({ speaker: 'unknown', text: segment.text, start: segment.start, end: segment.end }))
     : text
       ? [{ speaker: 'unknown', text }]
       : [];

@@ -1,6 +1,6 @@
 # insight-web
 
-Minimal React frontend for Insight. Vite, JS only, React Query for data. No UI library.
+Minimal React frontend for Insight.
 
 ## Run
 
@@ -17,5 +17,6 @@ Or with the rest of the stack via Docker Compose from the repo root:
 docker compose up --build web
 ```
 
-Either way it serves on http://localhost:3000. The backend URL is `VITE_API_URL`
-in `.env` (defaults to insight-core on `:4000`).
+Either way it serves on http://localhost:3000.  
+Set `VITE_API_URL=http://localhost:4000` in `insight-web/.env` before starting the dev server or building the Docker image.  
+The provided `.env.example` contains this setting.

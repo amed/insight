@@ -1,9 +1,0 @@
-{
-  "interaction_id": "demo-001",
-  "turns": [
-    { "speaker": "customer", "text": "Hi, I was charged twice for my order last week." },
-    { "speaker": "agent", "text": "I'm sorry about that. Can I get your order number?" },
-    { "speaker": "customer", "text": "Sure, it's 48213. I want one of the charges refunded." },
-    { "speaker": "agent", "text": "Thanks. I've refunded the duplicate charge, it'll show up in 3-5 days." }
-  ]
-}

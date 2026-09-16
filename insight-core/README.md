@@ -28,7 +28,7 @@ npm run dev
 ## API
 
 ```bash
-curl -i -F "file=@examples/transcript.json" -F "pipeline=p2" http://localhost:4000/interactions
+curl -i -F "file=@../examples/transcript.json" -F "pipeline=p2" http://localhost:4000/interactions
 curl http://localhost:4000/interactions/1
 curl http://localhost:4000/interactions/1/steps
 ```

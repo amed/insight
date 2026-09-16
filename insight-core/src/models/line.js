@@ -9,6 +9,8 @@ module.exports = (sequelize) => {
       ordinal: { type: DataTypes.INTEGER, allowNull: false },
       speaker: { type: DataTypes.TEXT, allowNull: false },
       text: { type: DataTypes.TEXT, allowNull: false },
+      startMs: { type: DataTypes.INTEGER, allowNull: true }, // Null for transcript uploads
+      endMs: { type: DataTypes.INTEGER, allowNull: true },
     },
     {
       sequelize,

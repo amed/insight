@@ -9,6 +9,8 @@ function serializeInteraction(interaction) {
       line_id: line.lineId,
       speaker: line.speaker,
       text: line.text,
+      start: line.startMs == null ? null : line.startMs / 1000,
+      end: line.endMs == null ? null : line.endMs / 1000,
     })),
     record: interaction.record
       ? {

@@ -1,7 +1,14 @@
 import { useInteraction } from '../hooks/useInteraction.js';
 import { useSteps } from '../hooks/useSteps.js';
 
-// the message shown when the fields list is empty, based on record status
+// Seconds become m:ss for the bubble header, no time gives an empty string.
+function clock(seconds) {
+  if (seconds == null) return '';
+  const whole = Math.floor(seconds);
+  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
+}
+
+// The message shown when the fields list is empty, based on record status.
 function emptyFieldsMessage(record) {
   if (!record) return 'no record';
   if (record.status === 'pending') return 'processing, this updates automatically';
@@ -26,10 +33,14 @@ export default function InteractionDetail({ id }) {
       <p className="muted">status: {record ? record.status : 'n/a'}</p>
 
       <h4>lines</h4>
-      <ul className="lines">
+      <ul className="chat">
         {data.lines.map((line) => (
-          <li key={line.line_id}>
-            <span className="muted">{line.line_id} {line.speaker}:</span> {line.text}
+          <li key={line.line_id} className={`bubble ${line.speaker}`}>
+            <div className="bubble-meta">
+              <span>{line.line_id} {line.speaker}</span>
+              <span>{clock(line.start)}</span>
+            </div>
+            {line.text}
           </li>
         ))}
       </ul>
