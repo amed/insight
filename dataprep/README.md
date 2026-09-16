@@ -1,19 +1,33 @@
-# Data preparation
+# Data Preparation
 
-Multiple data sources are used in order to provide proper data for evaluation.  
-**Check [docs/](./docs/) for more details about data sources**
+Downloads ABCD, EmoWOZ, MAIA-DQE and HarperValleyBank, then builds schema-v1 training and evaluation data.
 
-Everything in this data preparation module is bound to schema v1: the mappings are stamped for it, every training label and gold value is checked against its value sets at build time, and every output manifest carries its name and content hash.
-A new schema (not v1) is possible in theory, but it makes `validate.py` fail until the data is rebuilt. New Schema will need chaning in mapping functions between datasets in order to train specific fields for P1.
+Everything in this data preparation module is bound to schema v1. The mappings are stamped, every training label and gold value is checked against its value sets at build time, and every output manifest carries its name and content hash.  
 
+From the repository root:
 
 ```bash
-python3 prepare.py    # download corpora, write training files, build test batches
-python3 validate.py   # check everything prepare.py produced
+python3 dataprep/prepare.py
+python3 dataprep/validate.py
 ```
 
-To rebuild from scratch, delete output (a file under `out/training/`, a batch directory
-under `out/testing/`, a corpus under `data/`).
+
+
+
+
+Requires Python 3.10+, Git and FFmpeg/ffprobe. Existing downloads, completed training files and test batches are skipped. Delete the relevant folder under `data/` or `out/` to rebuild it.
+
+## Output
+
+| Directory | Contents |
+|---|---|
+| `data/` | Downloaded corpora. |
+| `out/training/` | Labelled examples for the five baseline fields. |
+| `out/testing/abcd-text/` | 186 text records. |
+| `out/testing/maia-text/` | 101 held-out dialogues. |
+| `out/testing/hvb-audio/` | 50 calls as oracle/ASR transcripts and mono/stereo audio. |
+
+Validation checks schema stamps, labels, train/test separation and audio properties. 
 
 ## What is prepared
 
@@ -35,6 +49,10 @@ Testing (uploaded to the pipelines by the evaluation, never trained on):
 | maia-text | held-out MAIA dialogues | sentiment, resolution_status |
 | hvb-audio | 50 calls: oracle + asr text records, mono + stereo wavs | intent, speakers |
 
+
+See [dataset mappings](docs/datasets.md) for label and split rules.
+
+
 ## Split discipline
 
 - ABCD ships pre-split; training uses the train split, the batch the test split
@@ -45,10 +63,20 @@ Testing (uploaded to the pipelines by the evaluation, never trained on):
 - EmoWOZ is training-side only; HVB is testing-side only
 - `validate.py` proves it: no training text equals any test record text
 
-## Licenses
 
-- ABCD: MIT
-- HVB: CC BY 4.0
-- EmoWOZ: CC BY-NC 4.0 (non-commercial)
-- MAIA-DQE: CC BY-ND 4.0 (no derivatives: the converted maia records must stay
-  out of any public repository)
+## Licences
+
+- ABCD: MIT (Retain upstream copyright and licence notices).
+- HarperValleyBank: CC BY 4.0 (attribute the source and indicate changes).
+- EmoWOZ: CC BY-NC 4.0 (non-commercial use with attribution).
+- MAIA-DQE: CC BY-ND 4.0 (keep converted records local).
+
+
+## Notes
+
+Raw and generated data are gitignored. See [sources and attribution](docs/data-sources.md).
+
+**Check [docs/](./docs/) for more details about data sources**
+
+A new schema (not v1) for evaluation is possible in theory, but it will make `validate.py` fail until the data is rebuilt.  
+New Schema will need changing in mapping functions between datasets, in order to train specific fields for P1.
