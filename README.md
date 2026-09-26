@@ -71,6 +71,19 @@ curl http://localhost:4000/interactions/1/steps
 More example inputs, including a recorded call in mono, stereo and every accepted audio format, are in `examples/README.md`.
 
 
+## Run the tests
+
+Unit tests run without Docker or the datasets. Each part has its own suite:
+
+```bash
+cd insight-core && npm test
+cd evaluation && python3 -m unittest
+cd dataprep && python3 -m unittest
+```
+
+Checks against the running services are in [docs/testing.md](docs/testing.md), and the built datasets are checked with `python3 dataprep/validate.py`.
+
+
 
 ## Repository contents
 
