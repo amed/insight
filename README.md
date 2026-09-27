@@ -26,6 +26,13 @@ Three pre-trained models are orchestrated across two data spaces, audio and text
 
 Each model runs as its own container. The LLM is provider-agnostic (runs locally via Ollama). The default pipieline for this system is **P2** (Grounded LLM)
 
+
+**Note**:
+
+    A fresh clone cannot run pipeline P1.
+    It needs dataprep/out/.
+    The training data is derived from public corpora whose licences do not allow the converted files to be redistributed, so the repository downloads the corpora and builds the training set locally before that pipeline can be used.
+
 ## Prerequisites
 
 To run the system, you need [Docker Compose](https://docs.docker.com/compose/), [Python 3.10+](https://www.python.org/downloads/), [Git](https://git-scm.com/install/) and [FFmpeg/ffprobe](https://ffmpeg.org/download.html).  
